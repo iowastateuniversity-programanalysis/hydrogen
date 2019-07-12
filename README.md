@@ -82,7 +82,7 @@ Comments and more details for the program including the class structure with the
  found in `Doc` folder. Follow the `README.txt` inside the folder for more information.
 
 ## Questions and Bug reporting:
-In case of questions about the usage/functionality of the framework or if you want to report a bug, please email `ashwinkj@iastate.edu` or `weile@iastate.edu`. The repository will be updated with more features and bug fixes in time, but there will be a delay in responding to the emails.
+In case of questions about the usage/functionality of the framework or if you want to report a bug, please email `hydrogen-mvicfg@iastate.edu`. The repository will be updated with more features and bug fixes in time, but there will be a delay in responding to the emails.
 
 ## Acknowledgment
 This work is developed under the support of the National Science Foundation (NSF) under Award 1542117
