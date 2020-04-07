@@ -168,3 +168,5 @@ pythontex-files-*/
 *.fff
 
 build/
+Result.txt
+MVICFG.dot
