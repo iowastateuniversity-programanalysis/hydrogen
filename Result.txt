@@ -1,0 +1,3 @@
+Input Args:
+build/Hydrogen.out  TestPrograms/Buggy/ProgV1.bc  TestPrograms/Correct/ProgV2.bc  ::  TestPrograms/Buggy/Prog.c  ::  TestPrograms/Correct/Prog.c  
+Finished Building MVICFG in 3ms

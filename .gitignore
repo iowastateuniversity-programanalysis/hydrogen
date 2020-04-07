@@ -166,3 +166,5 @@ pythontex-files-*/
 # endfloat
 *.ttt
 *.fff
+
+build/

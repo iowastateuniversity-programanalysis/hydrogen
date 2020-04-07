@@ -4,7 +4,7 @@
 ########################################
 import os
 print("Compiling Hydrogen")
-os.chdir("./BuildNinja")
+os.chdir("./build")
 os.system("ninja")
 if (os.path.isfile("./Result.txt")):
     os.system("rm ./Result.txt")
@@ -39,14 +39,14 @@ print("Argument:\n" + pathAbs)
 #         Running Hydrogen             #
 ########################################
 print("Running Hydrogen")
-os.chdir("./BuildNinja")
+os.chdir("./build")
 hydrogenCall = "./Hydrogen.out " + pathAbs
 os.system(hydrogenCall)
 os.chdir("../")
 ########################################
 #        Collecting Results            #
 ########################################
-resultMove = "cp ./BuildNinja/Result.txt " + pathToDir + "Result.txt"
+resultMove = "cp ./build/Result.txt " + pathToDir + "Result.txt"
 os.system(resultMove)
-resultMove = "cp ./BuildNinja/MVICFG.dot " + pathToDir + "MVICFG.dot"
+resultMove = "cp ./build/MVICFG.dot " + pathToDir + "MVICFG.dot"
 os.system(resultMove)

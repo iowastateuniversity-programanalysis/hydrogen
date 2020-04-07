@@ -59,7 +59,7 @@ $ Hydrogen.out <Path-to-LLVMIR_1> <Path-to-LLVMIR_2> .. <Path-to-LLVMIR_N> :: <P
 $ ./Hydrogen.out ../TestPrograms/Buggy/ProgV1.bc ../TestPrograms/Correct/ProgV2.bc :: ../TestPrograms/Buggy/Prog.c ::\
  ../TestPrograms/Correct/Prog.c
 ```
-6) A python script `BuildSystem.py` is provided to ease the process of invoking the Hydrogen executable. It will also
+6) A python script `SystemBuilder.py` is provided to ease the process of invoking the Hydrogen executable. It will also
  rebuild Hydrogen (if necessary) and transfer the resulting `MVICFG.dot` file into the parent directory.
 
 ## Dependencies
