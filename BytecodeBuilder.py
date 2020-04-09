@@ -1,14 +1,31 @@
 import os
 from sys import argv
 
-if len(argv) > 1:
-    infile = argv[1]
-    output = argv[1].replace('.c', '.bc', 1)
-    if not (infile.endswith('.c') and os.path.isfile(infile)):
-        print(f'{infile} is not a valid input file.')
-        exit()
+def build(file, tag=''):
+    if not os.path.isfile(file):
+        print(f'{file} is not a valid input file.')
+        return
 
-    os.system(f"clang -c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S {infile} -o {output}")
-    print(f'Spit out {output}')
-else:
-    print('Usage: python3 BytecodeBuilder.py <filename>')
+    pwd = os.getcwd()
+
+    path, infile = os.path.split(file)
+    outfile = infile.replace('.c', f'{tag}.bc', 1)
+
+    os.chdir(path)
+    command = f"clang -c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S {infile} -o {outfile}"
+    print(f'In directory {path} execute {command}')
+    os.system(command)
+    os.chdir(pwd)
+
+files = [
+    './TestPrograms/Buggy/Prog.c',
+    './TestPrograms/Buggy2/Prog.c',
+    './TestPrograms/Correct/Prog.c',
+    ]
+for v in files:
+    build(v)
+
+# if len(argv) > 1:
+#     build(argv[1])
+# else:
+#     print('Usage: python3 BytecodeBuilder.py <filename>')
