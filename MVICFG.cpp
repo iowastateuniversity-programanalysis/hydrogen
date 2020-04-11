@@ -12,6 +12,86 @@
 #include "Graph_Line.hpp"
 #include "Module.hpp"
 namespace hydrogen_framework {
+
+// DFS from instruction downwards, skipping vertices that have been visited, and
+// print the path when we get back to an instruction that is of another previous version.
+int dfsPath(Graph *MVICFG,
+  Graph_Instruction *instruction,
+  std::set<Graph_Instruction *> &visited,
+  std::set<Graph_Instruction *> &newInstructions,
+  bool verbose = false)
+{
+  if (verbose) {
+    std::cout << instruction->getInstructionLabel() << std::endl;
+  }
+  visited.insert(instruction);
+
+  int pathCount = 0;
+
+  for (auto edge :instruction->getInstructionEdges()) {
+    auto leadingOut = edge->getEdgeFrom()->getInstructionID() == instruction->getInstructionID();
+    if (leadingOut) {
+      auto to = getMatchedInstructionFromGraph(MVICFG, edge->getEdgeTo());
+
+      // End the path since we've joined back up with a vertex in the old version
+      if (newInstructions.find(to) == newInstructions.end()) {
+        if (verbose) {
+          std::cout << to->getInstructionLabel() << std::endl;
+          std::cout << "Done with path!" << std::endl;
+        }
+        pathCount += 1;
+        continue;
+      }
+
+      // Don't proceed if we've seen this one before
+      if (visited.find(to) != visited.end()) {
+        pathCount += 1;
+        continue;
+      }
+
+      pathCount += dfsPath(MVICFG, to, visited, newInstructions, verbose);
+    }
+  }
+
+  return pathCount;
+}
+
+int reportPaths(Graph *MVICFG, std::list<Graph_Line *> lines, bool verbose) {
+  std::list<std::list<Graph_Instruction *>> paths;
+  std::set<Graph_Instruction *> visited;
+  std::set<Graph_Instruction *> newInstructions;
+  
+  for (auto line: lines) {
+    for (auto instr : line->getLineInstructions()) {
+      auto matchedInstruction = getMatchedInstructionFromGraph(MVICFG, instr);
+      newInstructions.insert(matchedInstruction);
+    }
+  }
+
+  int pathCount = 0;
+
+  for (auto instruction: newInstructions) {
+    // Don't proceed if we've seen this one before.
+    if (visited.find(instruction) == visited.end()) {
+      auto edges = instruction->getInstructionEdges();
+      auto edgeLeadingIn = std::find_if(edges.begin(), edges.end(), [=](Graph_Edge *e){
+        return e->getEdgeTo()->getInstructionID() == instruction->getInstructionID();
+      });
+      if (edgeLeadingIn == edges.end()) {
+        std::cerr << "Couldn't get edge leading in." << std::endl;
+        continue;
+      }
+
+      if (verbose) {
+        std::cout << (*edgeLeadingIn)->getEdgeFrom()->getInstructionLabel() << std::endl;
+      }
+      pathCount += dfsPath(MVICFG, instruction, visited, newInstructions, verbose);
+    }
+  }
+  
+  return pathCount;
+}
+
 Graph *buildICFG(Module *mod, unsigned graphVersion) {
   std::unique_ptr<llvm::Module> &modPtr = mod->getPtr();
   Graph *ICFG = new Graph(graphVersion);
@@ -68,7 +148,7 @@ Graph *buildICFG(Module *mod, unsigned graphVersion) {
   }   // End loop for Module
   ICFG->addBranchEdges();
   ICFG->addFunctionCallEdges();
-  /* ICFG->printGraph("Graph_" + std::to_string(graphVersion)); */
+  ICFG->printGraph("Graph_" + std::to_string(graphVersion));
   return ICFG;
 } // End buildICFG
 
@@ -505,7 +585,7 @@ Graph_Instruction *getMatchedInstructionFromGraph(Graph *graphToMatch, Graph_Ins
         /* This is a virtual node and they always share their line numbers */
         unsigned instToLineNumber = instToMatch->getGraphLine()->getLineNumber(graphToMatch->getGraphVersion());
         findInst = std::find_if(std::begin(lineInstList), std::end(lineInstList), [=](Graph_Instruction *inst) {
-          return (inst->getGraphLine()->getLineNumber(graphToMatch->getGraphVersion() == instToLineNumber));
+          return (inst->getGraphLine()->getLineNumber(graphToMatch->getGraphVersion()) == instToLineNumber);
         });
       } else {
         findInst = std::find_if(std::begin(lineInstList), std::end(lineInstList), [=](Graph_Instruction *inst) {

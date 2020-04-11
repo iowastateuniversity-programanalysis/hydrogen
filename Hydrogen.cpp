@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
       std::list<Diff_Mapping> diffMap = generateLineMapping(*iterModule, *iterModuleNext);
       Graph *ICFG = buildICFG(*iterModuleNext, ++graphVersion);
       for (auto iter : diffMap) {
-        /* iter.printFileInfo(); */
+        // iter.printFileInfo();
         std::list<Graph_Line *> iterAdd = addToMVICFG(MVICFG, ICFG, iter, graphVersion);
         std::list<Graph_Line *> iterDel = deleteFromMVICFG(MVICFG, ICFG, iter, graphVersion);
         std::map<Graph_Line *, Graph_Line *> iterMatch = matchedInMVICFG(MVICFG, ICFG, iter, graphVersion);
@@ -66,6 +66,12 @@ int main(int argc, char *argv[]) {
       updateMVICFGVersion(MVICFG, addedLines, deletedLines, diffMap, graphVersion);
       /* Update Map Version */
       MVICFG->setGraphVersion(graphVersion);
+
+      // Report paths added/deleted
+      int pathsAdded = reportPaths(MVICFG, addedLines);
+      std::cout << "Version " << graphVersion << " added " << pathsAdded << " paths" << std::endl;
+      int pathsDeleted = reportPaths(MVICFG, deletedLines, true);
+      std::cout << "Version " << graphVersion << " removed " << pathsDeleted << " paths" << std::endl;
     } // End check for iterModuleEnd
   } // End loop for Module
   /* Stop timer */

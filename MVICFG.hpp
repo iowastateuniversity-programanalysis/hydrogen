@@ -24,6 +24,11 @@ class Graph_Line;
 class Module;
 
 /**
+ * Report paths added in the set of lines.
+ */
+int reportPaths(Graph *MVICFG, std::list<Graph_Line *> lines, bool verbose = false);
+
+/**
  * Build ICFG for the given module
  */
 Graph *buildICFG(Module *mod, unsigned graphVersion);
