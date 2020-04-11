@@ -1,0 +1,7 @@
+Input Args:
+./build/Hydrogen.out  ./TestPrograms/Mine/Ladybug1/main.bc  ./TestPrograms/Mine/Ladybug2/main.bc  ::  ./TestPrograms/Mine/Ladybug1/main.c  ::  ./TestPrograms/Mine/Ladybug2/main.c  
+Finished Building MVICFG in 9ms
+Nodes: 32829
+Edges: 69
+Version 2 added 7 paths
+Version 2 removed 7 paths

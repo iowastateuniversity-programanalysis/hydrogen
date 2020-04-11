@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
   unsigned graphVersion = 1;
   Module *firstMod = mod.front();
   Graph *MVICFG = buildICFG(firstMod, graphVersion);
+  std::map<unsigned int, std::pair<int, int>> pathsChanged;
   /* Start timer */
   auto mvicfgStart = std::chrono::high_resolution_clock::now();
   /* Create MVICFG */
@@ -69,9 +70,10 @@ int main(int argc, char *argv[]) {
 
       // Report paths added/deleted
       int pathsAdded = reportPaths(MVICFG, addedLines);
-      std::cout << "Version " << graphVersion << " added " << pathsAdded << " paths" << std::endl;
       int pathsDeleted = reportPaths(MVICFG, deletedLines);
-      std::cout << "Version " << graphVersion << " removed " << pathsDeleted << " paths" << std::endl;
+      pathsChanged.insert(std::pair<unsigned int, std::pair<int, int>>(graphVersion, std::pair<int, int>(pathsAdded, pathsDeleted)));
+      // std::cout << "Version " << graphVersion << " added " << pathsAdded << " paths" << "\n";
+      // std::cout << "Version " << graphVersion << " removed " << pathsDeleted << " paths" << "\n";
     } // End check for iterModuleEnd
   } // End loop for Module
   /* Stop timer */
@@ -91,6 +93,13 @@ int main(int argc, char *argv[]) {
   } // End loop for writing arguments
   rFile << "\n";
   rFile << "Finished Building MVICFG in " << mvicfgBuildTime.count() << "ms\n";
+  rFile << "Nodes: " << MVICFG->countNodes() << "\n";
+  rFile << "Edges: " << MVICFG->countEdges() << "\n";
+  for (auto pair : pathsChanged) {
+    auto addedRemoved = pair.second;
+    rFile << "Version " << pair.first << " added " << addedRemoved.first << " paths" << "\n";
+    rFile << "Version " << pair.first << " removed " << addedRemoved.second << " paths" << "\n";
+  }
   rFile.close();
   return 0;
 } // End main

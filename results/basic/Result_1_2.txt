@@ -1,3 +1,7 @@
 Input Args:
-./build/Hydrogen.out  ./TestPrograms/Buggy/Prog.bc  ./TestPrograms/Buggy2/Prog.bc  ::  ./TestPrograms/Buggy/Prog.c  ::  ./TestPrograms/Buggy2/Prog.c  
-Finished Building MVICFG in 11ms
+./build/Hydrogen.out  ./TestPrograms/Basic/Buggy2/Prog.bc  ./TestPrograms/Basic/Correct/Prog.bc  ::  ./TestPrograms/Basic/Buggy2/Prog.c  ::  ./TestPrograms/Basic/Correct/Prog.c  
+Finished Building MVICFG in 12ms
+Nodes: 32846
+Edges: 83
+Version 2 added 2 paths
+Version 2 removed 4 paths

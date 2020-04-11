@@ -169,6 +169,16 @@ public:
    */
   std::list<std::string> getWhiteList() { return whiteList; }
 
+  /**
+   * Return the number of nodes
+   */
+  int countNodes();
+
+  /**
+   * Return the number of edges
+   */
+  int countEdges();
+
 private:
   unsigned graphID;                           /**< Unique Graph ID */
   unsigned graphVersion;                      /**< Version of graph. */

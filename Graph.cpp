@@ -343,4 +343,18 @@ bool Graph::isVirtualNodeLineNumber(unsigned lineNumber) {
   } // End check for Exit and Entry
   return false;
 } // End isVirtualNode
+
+int Graph::countNodes() {
+  int count;
+  for (auto func : getGraphFunctions()) {
+    for (auto line : func->getFunctionLines()) {
+      count += line->getLineInstructions().size();
+    }
+  }
+  return count;
+}
+
+int Graph::countEdges() {
+  return getGraphEdges().size();
+}
 } // namespace hydrogen_framework
