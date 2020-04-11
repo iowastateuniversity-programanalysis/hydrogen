@@ -1,3 +1,0 @@
-Input Args:
-/home/hydrogen/build/Hydrogen.out  ./TestPrograms/Buggy/Prog.bc  ./TestPrograms/Correct/Prog.bc  ::  ./TestPrograms/Buggy/Prog.c  ::  ./TestPrograms/Correct/Prog.c  
-Finished Building MVICFG in 10ms
