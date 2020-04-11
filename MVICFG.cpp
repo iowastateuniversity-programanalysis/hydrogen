@@ -64,7 +64,8 @@ int reportPaths(Graph *MVICFG, std::list<Graph_Line *> lines, bool verbose) {
   for (auto line: lines) {
     for (auto instr : line->getLineInstructions()) {
       auto matchedInstruction = getMatchedInstructionFromGraph(MVICFG, instr);
-      newInstructions.insert(matchedInstruction);
+      if (matchedInstruction)
+        newInstructions.insert(matchedInstruction);
     }
   }
 
@@ -438,8 +439,8 @@ std::list<Graph_Line *> addToMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mapping dif
     std::list<Graph_Line *> addedGraphLines;
     addedGraphLines = getGraphLinesGivenLine(ICFG, line, fileName);
     if (addedGraphLines.empty()) {
-      std::cerr << "Graph_Line for line " << line << ":" << fileName << " not found in ICFG Ver " << Version << "\n";
-      std::cerr << "Skipping this line and continuing\n";
+      // std::cerr << "Graph_Line for line " << line << ":" << fileName << " not found in ICFG Ver " << Version << "\n";
+      // std::cerr << "Skipping this line and continuing\n";
       continue;
     } // End check for addedGraphLines
     for (auto addedLine : addedGraphLines) {
@@ -566,8 +567,8 @@ std::list<Graph_Line *> addToMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mapping dif
                 } // End check for checkEdge
               }   // End check for Predecessor & Successors
             } else {
-              std::cerr << "No matching line found for " << t->getLineNumber(ICFG->getGraphVersion())
-                        << " in MVICFG(A)\n";
+              // std::cerr << "No matching line found for " << t->getLineNumber(ICFG->getGraphVersion())
+                        // << " in MVICFG(A)\n";
             } // End check for tDash
           }   // End check to see if the function is in the same diff file
         }     // End check for find T
@@ -644,8 +645,8 @@ std::list<Graph_Line *> deleteFromMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mappin
     std::list<Graph_Line *> deletedGraphLines;
     deletedGraphLines = getGraphLinesGivenLine(MVICFG, line, fileName);
     if (deletedGraphLines.empty()) {
-      std::cerr << "Graph_Line for line " << line << " not found in MVICFG\n";
-      std::cerr << "Skipping this line and continuing\n";
+      // std::cerr << "Graph_Line for line " << line << " not found in MVICFG\n";
+      // std::cerr << "Skipping this line and continuing\n";
       continue;
     } // End check for deletedGraphLines
     for (auto deleteLine : deletedGraphLines) {
@@ -761,15 +762,15 @@ std::list<Graph_Line *> deleteFromMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mappin
                           } // End check for checkEdge
                         }   // End check for Predecessors and Successors
                       } else {
-                        std::cerr << "No matching line found for " << mDash->getLineNumber(ICFG->getGraphVersion())
-                                  << " in MVICFG(D)\n";
+                        // std::cerr << "No matching line found for " << mDash->getLineNumber(ICFG->getGraphVersion())
+                        //           << " in MVICFG(D)\n";
                       } // End check for m
                     }   // End check to see if the function is in the same diff file
                   }     // End loop for MDash
                 } else {
-                  std::cerr << "No matching line found for " << n->getLineNumber(MVICFG->getGraphVersion())
-                            << " in ICFG(" << ICFG->getGraphVersion() << ")\n";
-                  std::cerr << "file : " << fileName << "\n";
+                  // std::cerr << "No matching line found for " << n->getLineNumber(MVICFG->getGraphVersion())
+                  //           << " in ICFG(" << ICFG->getGraphVersion() << ")\n";
+                  // std::cerr << "file : " << fileName << "\n";
                 } // End check for nDash
               }   // End check to see if the function is in the same diff file
             }     // End check for T in N
@@ -798,8 +799,8 @@ std::map<Graph_Line *, Graph_Line *> matchedInMVICFG(Graph *MVICFG, Graph *ICFG,
       std::list<Graph_Line *> icfgGraphLines;
       icfgGraphLines = getGraphLinesGivenLine(ICFG, icfgLineNo, fileName);
       if (icfgGraphLines.empty()) {
-        std::cerr << "Graph_Line for line " << icfgLineNo << " not found in ICFG\n";
-        std::cerr << "Skipping this line and continuing\n";
+        // std::cerr << "Graph_Line for line " << icfgLineNo << " not found in ICFG\n";
+        // std::cerr << "Skipping this line and continuing\n";
         continue;
       } // End check for if line is present in ICFG
       if (mvicfgGraphLines.size() != icfgGraphLines.size()) {
@@ -883,8 +884,8 @@ std::map<Graph_Line *, Graph_Line *> matchedInMVICFG(Graph *MVICFG, Graph *ICFG,
               }   // End check for foundEdge
             }     // End check for Successor
           } else {
-            std::cerr << "No matching line found for " << t->getLineNumber(ICFG->getGraphVersion())
-                      << " in MVICFG(M)\n";
+            // std::cerr << "No matching line found for " << t->getLineNumber(ICFG->getGraphVersion())
+            //           << " in MVICFG(M)\n";
           } // End check for tDash
         }   // End check to see if the function is in the same diff file
       }     // End check for find T

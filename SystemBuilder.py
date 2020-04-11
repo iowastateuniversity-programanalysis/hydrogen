@@ -15,22 +15,54 @@ os.chdir('../')
 #           Path Settings              #
 ########################################
 demarcator = ' :: '
-test_root = './TestPrograms'
 
+test_root = './TestPrograms/Basic'
 files = {
-    'Buggy': {
+    # 'Buggy': {
+    #     'Source': ['Prog.c'],
+    #     'Bytecode': 'Prog.bc',
+    # },
+    'Buggy2': {
         'Source': ['Prog.c'],
         'Bytecode': 'Prog.bc',
     },
-    # 'Buggy2': {
-    #     'Source': ['Prog.c'],
-    #     'Bytecode': 'Prog1.bc',
-    # },
     'Correct': {
         'Source': ['Prog.c'],
         'Bytecode': 'Prog.bc',
     },
 }
+
+# test_root = './TestPrograms/Mine'
+# files = {
+#     'Ladybug1': {
+#         'Source': ['main.c'],
+#         'Bytecode': 'main.bc',
+#     },
+#     'Ladybug2': {
+#         'Source': ['main.c'],
+#         'Bytecode': 'main.bc',
+#     },
+#     'Ladybug3': {
+#         'Source': ['main.c'],
+#         'Bytecode': 'main.bc',
+#     },
+# }
+
+# test_root = './TestPrograms/OSS'
+# files = {
+#     'fiche_1': {
+#         'Source': ['fiche.c', 'main.c'],
+#         'Bytecode': 'prog.bc',
+#     },
+#     'fiche_2': {
+#         'Source': ['fiche.c', 'main.c'],
+#         'Bytecode': 'prog.bc',
+#     },
+#     'fiche_3': {
+#         'Source': ['fiche.c', 'main.c'],
+#         'Bytecode': 'prog.bc',
+#     },
+# }
 
 input_files = [[os.path.join(test_root, k, f) for f in v['Source']] for k, v in files.items()]
 

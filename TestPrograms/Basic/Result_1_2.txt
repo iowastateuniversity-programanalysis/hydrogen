@@ -1,0 +1,6 @@
+Input Args:
+./build/Hydrogen.out  ./TestPrograms/Basic/Buggy/Prog.bc  ./TestPrograms/Basic/Buggy2/Prog.bc  ::  ./TestPrograms/Basic/Buggy/Prog.c  ::  ./TestPrograms/Basic/Buggy2/Prog.c  
+Finished Building MVICFG in 8ms
+
+Version 2 added 3 paths
+Version 2 removed 2 paths

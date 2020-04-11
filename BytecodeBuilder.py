@@ -21,6 +21,9 @@ files = [
     './TestPrograms/Buggy/Prog.c',
     './TestPrograms/Buggy2/Prog.c',
     './TestPrograms/Correct/Prog.c',
+    './TestPrograms/Mine/Ladybug1/main.c',
+    './TestPrograms/Mine/Ladybug2/main.c',
+    './TestPrograms/Mine/Ladybug3/main.c',
     ]
 for v in files:
     build(v)
