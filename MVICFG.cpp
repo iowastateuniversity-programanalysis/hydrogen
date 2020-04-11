@@ -81,10 +81,12 @@ int reportPaths(Graph *MVICFG, std::list<Graph_Line *> lines, bool verbose) {
         std::cerr << "Couldn't get edge leading in." << std::endl;
         continue;
       }
+      auto from = (*edgeLeadingIn)->getEdgeFrom();
 
       if (verbose) {
-        std::cout << (*edgeLeadingIn)->getEdgeFrom()->getInstructionLabel() << std::endl;
+        std::cout << from->getInstructionLabel() << std::endl;
       }
+      visited.insert(from);
       pathCount += dfsPath(MVICFG, instruction, visited, newInstructions, verbose);
     }
   }

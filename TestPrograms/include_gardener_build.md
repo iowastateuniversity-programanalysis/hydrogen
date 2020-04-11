@@ -1,0 +1,4 @@
+# Take out -asni
+set(CMAKE_CXX_COMPILER /usr/sbin/clang++)
+target_compile_options(include_gardener PUBLIC ${CMAKE_CXX_FLAGS} -O0 -g -emit-llvm -S)
+# llvm-link -S -o include_gardener.bc CMakeFiles/include_gardener.dir/src/helper.cpp.o CMakeFiles/include_gardener.dir/src/statement_detector.cpp.o CMakeFiles/include_gardener.dir/src/file_detector.cpp.o CMakeFiles/include_gardener.dir/src/input_files.cpp.o CMakeFiles/include_gardener.dir/src/vertex.cpp.o CMakeFiles/include_gardener.dir/src/solver.cpp.o CMakeFiles/include_gardener.dir/src/solver_c.cpp.o CMakeFiles/include_gardener.dir/src/solver_py.cpp.o CMakeFiles/include_gardener.dir/src/solver_rb.cpp.o CMakeFiles/include_gardener.dir/src/statement_py.cpp.o CMakeFiles/include_gardener.dir/src/main.cpp.o

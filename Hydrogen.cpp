@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
       // Report paths added/deleted
       int pathsAdded = reportPaths(MVICFG, addedLines);
       std::cout << "Version " << graphVersion << " added " << pathsAdded << " paths" << std::endl;
-      int pathsDeleted = reportPaths(MVICFG, deletedLines, true);
+      int pathsDeleted = reportPaths(MVICFG, deletedLines);
       std::cout << "Version " << graphVersion << " removed " << pathsDeleted << " paths" << std::endl;
     } // End check for iterModuleEnd
   } // End loop for Module
