@@ -345,7 +345,7 @@ bool Graph::isVirtualNodeLineNumber(unsigned lineNumber) {
 } // End isVirtualNode
 
 int Graph::countNodes() {
-  int count;
+  int count = 0;
   for (auto func : getGraphFunctions()) {
     for (auto line : func->getFunctionLines()) {
       count += line->getLineInstructions().size();
