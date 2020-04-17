@@ -45,17 +45,25 @@ class CompileManager:
 
     def build_one(self, version_path, force):
         ver=Version(version_path)
+        ver.build(self.language, force)
         self.versions_built.append(ver)
-        
+
+class Version:
+    def __init__(self, path):
+        self.path=path
+        self.c_paths=[]
+        self.bc_path=None
+    
+    def build(self, language, force):
         # Set up build directory
-        build_path = version_path / 'build'
+        build_path = self.path / 'build'
 
         # Skip if built already unless we wanna HULK SMASH
         if build_path.exists():
             if force:
                 shutil.rmtree(build_path)
             else:
-                print(f'Version {version_path} is already built, skipping')
+                print(f'Version {self.path} is already built, skipping')
                 return
         
         build_path.mkdir()
@@ -63,7 +71,7 @@ class CompileManager:
         # Transform CMakeLists.txt
         cmake_utils_dir = (Path(__file__).parent / 'llvm-ir-cmake-utils' / 'cmake').resolve()
 
-        root_cmakelist = version_path / 'CMakeLists.txt'
+        root_cmakelist = self.path / 'CMakeLists.txt'
         filecontents = ''
         with root_cmakelist.open('r') as file:
             for line in file:
@@ -90,7 +98,7 @@ class CompileManager:
 # LLVM-IR Generation
 list(APPEND CMAKE_MODULE_PATH "{cmake_utils_dir}")
 include(LLVMIRUtil)
-set_target_properties({target_name} PROPERTIES LINKER_LANGUAGE {self.language})
+set_target_properties({target_name} PROPERTIES LINKER_LANGUAGE {language})
 add_compile_options(-c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S)
 llvmir_attach_bc_target({target_name}_bc {target_name})
 add_dependencies({target_name}_bc {target_name})
@@ -104,19 +112,12 @@ llvmir_attach_link_target({llvmlink_target_name} {target_name}_bc -S)
 
         # Run CMake
         compile_env = os.environ.copy()
-        if self.language == 'C':
+        if language == 'C':
             compile_env['CC'] = 'clang'
-        elif self.language == 'CXX':
+        elif language == 'CXX':
             compile_env['CXX'] = 'clang++'
-        subprocess.run(args=['cmake', '-B', str(build_path), str(version_path)], env=compile_env)
+        subprocess.run(args=['cmake', '-B', str(build_path), str(self.path)], env=compile_env)
         subprocess.run(args=['cmake', '--build', str(build_path), '--target', llvmlink_target_name, '--verbose'], env=compile_env)
-
-
-class Version:
-    def __init__(self, path):
-        self.path=path
-        self.c_paths=[]
-        self.bc_path=None
 
 def main():
     cm=CompileManager(Path("./tmp").absolute())
