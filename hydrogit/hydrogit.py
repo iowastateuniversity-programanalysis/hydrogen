@@ -17,8 +17,8 @@ class HydroGit:
 
     def setup(self):
         # git
-        git_url="https://github.com/google/googletest.git"
-        self.git_commits = ["71d5df6c6b6769f13885a7a05dd6721a21e20c96", "01e4fbf5ca60d178007eb7900d728d73a61f5888"]
+        git_url="https://github.com/feddischson/include_gardener.git"
+        self.git_commits = ["093ab9c1126c6f946e4183dcf02d8cdff837337b", "90539a60dd83a6f0a30ecbb2ddfa3eeac529e975"]
 
         self.git_manager=GitManager(git_url, self.tmp)
 
@@ -60,18 +60,16 @@ def demo_override():
     hg.clone()
 
     # override clone
-    hg.tmp=hg.wd/"yolotests"
+    # hg.tmp=hg.wd/"yolotests"
     hg.setup()
 
     # fake compilation
     hg.compiler.run_all()
     for version in hg.compiler.versions:
-        for p in version.path.iterdir():
-            if p.suffix==".c":
-                version.c_paths.append(p)
-            else:
-                assert p.suffix==".bc"
-                version.bc_path=p
+        for p in version.path.glob('**/.c'):
+            version.c_paths.append(p)
+        for p in (version.path / 'build' / 'llvm-ir').glob('**/*_llvmlink.bc'):
+            version.bc_path=p
 
     # hydrogen
     hg.hydrogen()
