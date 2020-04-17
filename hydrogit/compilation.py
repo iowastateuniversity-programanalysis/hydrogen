@@ -143,8 +143,18 @@ class Version:
             compile_env['CC'] = 'clang'
         elif self.language == 'CXX':
             compile_env['CXX'] = 'clang++'
-        subprocess.run(args=['cmake', '-B', str(self.build_path), str(self.path)], env=compile_env)
-        subprocess.run(args=['cmake', '--build', str(self.build_path), '--target', target, '--verbose'], env=compile_env)
+        subprocess.run(args=[
+            'cmake',
+            '-B', str(self.build_path),
+            str(self.path)
+        ], env=compile_env)
+        subprocess.run(args=[
+            'cmake',
+            '--build',
+            str(self.build_path),
+            '--target', target,
+            # '--verbose' # Uncomment to show Make output
+        ], env=compile_env)
 
 def main():
     cm=CompileManager(Path("./tmp").absolute())
