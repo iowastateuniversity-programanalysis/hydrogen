@@ -167,6 +167,10 @@ pythontex-files-*/
 *.ttt
 *.fff
 
-build/
+# COMS513 :)
 Result.txt
 MVICFG.dot
+__pycache__
+hydrogit/tmp
+build
+buildninja
