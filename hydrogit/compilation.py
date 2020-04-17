@@ -6,9 +6,10 @@ import re
 import shutil
 
 class CompileManager:
-    def __init__(self, tmp):
+    def __init__(self, tmp, language='CXX'):
         self.tmp=tmp
         self.versions=[]
+        self.language=language
 
 
     def run_all(self, force=False):
@@ -63,13 +64,9 @@ class CompileManager:
 # LLVM-IR Generation
 list(APPEND CMAKE_MODULE_PATH "{cmake_utils_dir}")
 include(LLVMIRUtil)
-if("${{LINKER_LANGUAGE}}" STREQUAL "")
-  set_target_properties(include_gardener PROPERTIES LINKER_LANGUAGE CXX)
-endif()
+set_target_properties({target_name} PROPERTIES LINKER_LANGUAGE {self.language})
+add_compile_options(-c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S)
 llvmir_attach_bc_target({target_name}_bc {target_name})
-set(-c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S)
-set(llvmirBytecodeCompileOptions "-c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S")
-add_compile_options({target_name}_bc "${{llvmirBytecodeCompileOptions}}")
 add_dependencies({target_name}_bc {target_name})
 llvmir_attach_link_target({llvmlink_target_name} {target_name}_bc -S)
             '''
@@ -81,10 +78,12 @@ llvmir_attach_link_target({llvmlink_target_name} {target_name}_bc -S)
 
         # Run CMake
         compile_env = os.environ.copy()
-        compile_env['CXX'] = 'clang++'
-        compile_env['C'] = 'clang'
-        subprocess.run(['cmake', '-B', build_path, version_path], env=compile_env)
-        subprocess.run(['cmake', '--build', build_path, '--target', llvmlink_target_name])
+        if self.language == 'C':
+            compile_env['CC'] = 'clang'
+        elif self.language == 'CXX':
+            compile_env['CXX'] = 'clang++'
+        subprocess.run(args=['cmake', '-B', str(build_path), str(version_path)], env=compile_env)
+        subprocess.run(args=['cmake', '--build', str(build_path), '--target', llvmlink_target_name, '--verbose'], env=compile_env)
 
 
 class Version:
