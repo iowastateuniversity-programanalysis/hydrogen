@@ -34,7 +34,6 @@ class CompileManager:
         build_path.mkdir()
 
         # Transform CMakeLists.txt
-        # for cmakelist in version_path.glob('**/CMakeLists.txt'):
         cmake_utils_dir = (Path(__file__).parent / 'llvm-ir-cmake-utils' / 'cmake').resolve()
 
         root_cmakelist = version_path / 'CMakeLists.txt'
@@ -46,7 +45,6 @@ class CompileManager:
                 target_match = re.search(target_name_regex, line)
                 if target_match:
                     target_name = target_match.group(1)
-                    # print(f'target_name: {target_name}')
 
                 # Replace project name
                 project_name_regex = r'project\s*\(\s*([a-zA-Z0-9_]+)[^)]*\)'
@@ -57,7 +55,6 @@ class CompileManager:
                         project_name_regex,
                         f'project({project_name} C CXX)',
                         line)
-                    # print(f'replaced project line: {line}', end='')
 
                 filecontents += line
             
@@ -76,7 +73,6 @@ add_compile_options({target_name}_bc "${{llvmirBytecodeCompileOptions}}")
 add_dependencies({target_name}_bc {target_name})
 llvmir_attach_link_target({llvmlink_target_name} {target_name}_bc -S)
             '''
-            # print(f'adding {to_add}')
 
             filecontents += to_add
 
