@@ -1,7 +1,7 @@
 from git_stuff import GitManager
 from compilation import CompileManager
+from hydrogen import HydrogenAdapter
 import os
-import subprocess
 from pathlib import Path
 
 class HydroGit:
@@ -11,7 +11,7 @@ class HydroGit:
         self.git_commits = commit_ids
         self.git_manager=GitManager(git_url, self.tmp)
         self.compiler=CompileManager(self.tmp, language)
-        self.hydrogen_binary=self.wd/"../buildninja/Hydrogen.out"
+        self.hydrogen_manager=HydrogenAdapter(self.wd/"../buildninja/Hydrogen.out")
 
     def clone(self, force):
         # git
@@ -24,19 +24,7 @@ class HydroGit:
         self.compiler.gather_version_files()
 
     def hydrogen(self):
-        # ask the compiler for the results
-        args=[]
-        for version in self.compiler.versions_built:
-            args.append(version.bc_path)
-        for version in self.compiler.versions_built:
-            args.append("::")
-            for c_path in version.c_paths:
-                args.append(c_path)
-
-        cmd = [str(self.hydrogen_binary)] + [str(arg) for arg in args]
-        print(' '.join(cmd))
-
-        subprocess.run(cmd)
+        self.hydrogen_manager.run(self.compiler.versions_built)
 
 def run(url, commit_ids, force_pull, force_build, language):
     # setup
