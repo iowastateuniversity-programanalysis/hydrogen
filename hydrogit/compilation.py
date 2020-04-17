@@ -3,6 +3,7 @@ import subprocess
 import os
 import fileinput
 import re
+import shutil
 
 class CompileManager:
     def __init__(self, tmp):
@@ -23,9 +24,12 @@ class CompileManager:
         build_path = version_path / 'build'
 
         # Skip if built already unless we wanna HULK SMASH
-        if build_path.exists() and not force:
-            print(f'Version {version_path} is already built, skipping')
-            return
+        if build_path.exists():
+            if force:
+                shutil.rmtree(build_path)
+            else:
+                print(f'Version {version_path} is already built, skipping')
+                return
         
         build_path.mkdir()
 
