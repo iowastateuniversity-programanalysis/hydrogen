@@ -66,7 +66,10 @@ def demo_override():
     # fake compilation
     hg.compiler.run_all()
     for version in hg.compiler.versions:
-        for p in version.path.glob('**/.c'):
+        # Fix this benji!!??!?!?!!?
+        for p in (version.path / 'src').glob('**/*.cpp'):
+            version.c_paths.append(p)
+        for p in (version.path / 'src').glob('**/*.c'):
             version.c_paths.append(p)
         for p in (version.path / 'build' / 'llvm-ir').glob('**/*_llvmlink.bc'):
             version.bc_path=p
