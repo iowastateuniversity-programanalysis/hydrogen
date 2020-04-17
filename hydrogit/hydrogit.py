@@ -7,12 +7,13 @@ from pathlib import Path
 
 class HydroGit:
     def __init__(self, git_url, commit_ids, language):
-        self.wd=(Path(__file__).parent.absolute())
-        self.tmp=self.wd/"tmp"
         self.git_commits = commit_ids
-        self.git_manager=GitManager(git_url, self.tmp)
-        self.compiler=CompileManager(self.tmp, language)
-        self.hydrogen_manager=HydrogenAdapter(self.wd/"../buildninja/Hydrogen.out")
+
+        wd = (Path(__file__).parent.absolute())
+        tmp = wd / "tmp"
+        self.git_manager=GitManager(git_url, tmp)
+        self.compiler=CompileManager(tmp, language)
+        self.hydrogen_manager=HydrogenAdapter(wd / "../buildninja/Hydrogen.out")
 
     def clone(self, force):
         # git
@@ -22,7 +23,6 @@ class HydroGit:
     def compile(self, force_build):
         # compilation
         self.compiler.build_all(force_build)
-        self.compiler.gather_version_files()
 
     def hydrogen(self):
         self.hydrogen_manager.run(self.compiler.versions_built)
