@@ -13,21 +13,22 @@ class HydroGit:
         self.compiler=CompileManager(self.tmp, language)
         self.hydrogen_binary=self.wd/"../buildninja/Hydrogen.out"
 
-    def clone(self, force=False):
+    def clone(self, force):
         # git
         self.git_manager.clone(force)
         self.git_manager.checkout_copy_versions(self.git_commits)
 
-    def compile(self):
+    def compile(self, force_build):
         # compilation
-        self.compiler.run_all()
+        self.compiler.build_all(force_build)
+        self.compiler.gather_version_files()
 
     def hydrogen(self):
         # ask the compiler for the results
         args=[]
-        for version in self.compiler.versions:
+        for version in self.compiler.versions_built:
             args.append(version.bc_path)
-        for version in self.compiler.versions:
+        for version in self.compiler.versions_built:
             args.append("::")
             for c_path in version.c_paths:
                 args.append(c_path)
@@ -45,25 +46,7 @@ def run(url, commit_ids, force_pull, force_build, language):
     hg.clone(force_pull)
 
     # fake compilation
-    hg.compiler.run_all(force_build)
-    for version in hg.compiler.versions:
-        # gather C sources
-        if language == 'C':
-            for p in (version.path).glob('*.c'):
-                version.c_paths.append(p)
-            for p in (version.path / 'src').glob('**/*.c'):
-                version.c_paths.append(p)
-        
-        # gather C++ sources
-        elif language == 'CXX':
-            for p in (version.path).glob('*.cpp'):
-                version.c_paths.append(p)
-            for p in (version.path / 'src').glob('**/*.cpp'):
-                version.c_paths.append(p)
-
-        # gather compiled bytecode
-        for p in (version.path / 'build' / 'llvm-ir').glob('**/*_llvmlink.bc'):
-            version.bc_path=p
+    hg.compile(force_build)
 
     # hydrogen
     hg.hydrogen()
@@ -107,10 +90,10 @@ if __name__ == '__main__':
     language = args.language
 
     # git_url="https://github.com/feddischson/include_gardener.git"
-    # self.git_commits = ["093ab9c1126c6f946e4183dcf02d8cdff837337b", "90539a60dd83a6f0a30ecbb2ddfa3eeac529e975"]
+    # commit_ids = ["093ab9c1126c6f946e4183dcf02d8cdff837337b", "90539a60dd83a6f0a30ecbb2ddfa3eeac529e975"]
     # langauge='CXX'
-    # git_url="https://github.com/gydrogen/progolone.git"
-    # self.git_commits = ["5e8651df381079d0347ddfa254f554972611d1a0", "70d03532975252bd9982beba60a8720e11ec8f02", "9cde7197d0a3fe0caf7ee0ec7fd291e19ccc18ed"]
-    # language='C'
+    git_url="https://github.com/gydrogen/progolone.git"
+    commit_ids = ["5e8651df381079d0347ddfa254f554972611d1a0", "70d03532975252bd9982beba60a8720e11ec8f02", "9cde7197d0a3fe0caf7ee0ec7fd291e19ccc18ed"]
+    language='C'
 
     run(git_url, commit_ids, force_pull, force_build, language)

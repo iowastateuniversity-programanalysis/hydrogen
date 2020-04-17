@@ -8,18 +8,44 @@ import shutil
 class CompileManager:
     def __init__(self, tmp, language='CXX'):
         self.tmp=tmp
-        self.versions=[]
+        self.versions_built=[]
         self.language=language
 
+    def gather_version_files(self):
+        '''
+        Gather sources 
+        '''
+        for version in self.versions_built:
+            # gather C sources
+            if self.language == 'C':
+                for p in (version.path).glob('*.c'):
+                    version.c_paths.append(p)
+                for p in (version.path / 'src').glob('**/*.c'):
+                    version.c_paths.append(p)
+            
+            # gather C++ sources
+            elif self.language == 'CXX':
+                for p in (version.path).glob('*.cpp'):
+                    version.c_paths.append(p)
+                for p in (version.path / 'src').glob('**/*.cpp'):
+                    version.c_paths.append(p)
 
-    def run_all(self, force=False):
+            # gather compiled bytecode
+            for p in (version.path / 'build' / 'llvm-ir').glob('**/*_llvmlink.bc'):
+                version.bc_path=p
+
+    def build_all(self, force):
+        '''
+        Run compilation step for all versions.
+        '''
+
         for version_path in Path(self.tmp).iterdir():
             if version_path.is_dir() and version_path.name!="cloned":
-                self.run(version_path, force)
+                self.build_one(version_path, force)
 
-    def run(self, version_path, force=False):
+    def build_one(self, version_path, force):
         ver=Version(version_path)
-        self.versions.append(ver)
+        self.versions_built.append(ver)
         
         # Set up build directory
         build_path = version_path / 'build'
@@ -94,7 +120,7 @@ class Version:
 
 def main():
     cm=CompileManager(Path("./tmp").absolute())
-    cm.run_all()
+    cm.build_all()
 
 if __name__ == '__main__':
     main()
