@@ -17,15 +17,15 @@ class HydroGit:
 
     def setup(self):
         # git
-        # git_url="https://github.com/feddischson/include_gardener.git"
-        # self.git_commits = ["093ab9c1126c6f946e4183dcf02d8cdff837337b", "90539a60dd83a6f0a30ecbb2ddfa3eeac529e975"]
-        git_url="https://github.com/gydrogen/progolone.git"
-        self.git_commits = ["5e8651df381079d0347ddfa254f554972611d1a0", "70d03532975252bd9982beba60a8720e11ec8f02", "9cde7197d0a3fe0caf7ee0ec7fd291e19ccc18ed"]
+        git_url="https://github.com/feddischson/include_gardener.git"
+        self.git_commits = ["093ab9c1126c6f946e4183dcf02d8cdff837337b", "90539a60dd83a6f0a30ecbb2ddfa3eeac529e975"]
+        # git_url="https://github.com/gydrogen/progolone.git"
+        # self.git_commits = ["5e8651df381079d0347ddfa254f554972611d1a0", "70d03532975252bd9982beba60a8720e11ec8f02", "9cde7197d0a3fe0caf7ee0ec7fd291e19ccc18ed"]
 
         self.git_manager=GitManager(git_url, self.tmp)
 
         # compilation
-        self.compiler=CompileManager(self.tmp, language='C')
+        self.compiler=CompileManager(self.tmp, language='CXX')
 
         # hydrogen
         self.hydrogen_binary=self.wd/"../buildninja/Hydrogen.out"
