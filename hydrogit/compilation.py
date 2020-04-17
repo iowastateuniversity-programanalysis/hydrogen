@@ -9,33 +9,10 @@ cmake_utils_dir = (Path(__file__).parent / 'llvm-ir-cmake-utils' / 'cmake').reso
 assert cmake_utils_dir.exists()
 
 class CompileManager:
-    def __init__(self, tmp, language='CXX'):
+    def __init__(self, tmp, language):
         self.tmp=tmp
         self.versions_built=[]
         self.language=language
-
-    def gather_version_files(self):
-        '''
-        Gather sources 
-        '''
-        for version in self.versions_built:
-            # gather C sources
-            if self.language == 'C':
-                for p in (version.path).glob('*.c'):
-                    version.c_paths.append(p)
-                for p in (version.path / 'src').glob('**/*.c'):
-                    version.c_paths.append(p)
-            
-            # gather C++ sources
-            elif self.language == 'CXX':
-                for p in (version.path).glob('*.cpp'):
-                    version.c_paths.append(p)
-                for p in (version.path / 'src').glob('**/*.cpp'):
-                    version.c_paths.append(p)
-
-            # gather compiled bytecode
-            for p in (version.path / 'build' / 'llvm-ir').glob('**/*_llvmlink.bc'):
-                version.bc_path=p
 
     def build_all(self, force):
         '''
@@ -54,9 +31,57 @@ class CompileManager:
 class Version:
     def __init__(self, path, language):
         self.path=path
+        self.build_path = self.path / 'build'
         self.c_paths=[]
         self.bc_path=None
         self.language = language
+    
+    def build(self, force):
+        # Set up build path
+        self.setup_build_path(force)
+
+        # Transform CMakeLists.txt
+        root_cmakelist = self.path / 'CMakeLists.txt'
+        llvmlink_target = self.transform_cmakelists(root_cmakelist)
+
+        # Run CMake and collect the output
+        self.cmake(llvmlink_target)
+        self.glob_files()
+
+    def setup_build_path(self, force):
+        # Skip if built already unless we wanna HULK SMASH
+        if self.build_path.exists():
+            if force:
+                shutil.rmtree(self.build_path)
+            else:
+                print(f'Version {self.path} is already built, skipping')
+                return
+
+        self.build_path.mkdir(exist_ok=True)
+    
+    def glob_files(self):
+        '''
+        Gather sources and compiled bytecode for this version
+        '''
+        # gather C sources
+        if self.language == 'C':
+            for p in (self.path).glob('*.c'):
+                self.c_paths.append(p)
+            for p in (self.path / 'src').glob('**/*.c'):
+                self.c_paths.append(p)
+        
+        # gather C++ sources
+        elif self.language == 'CXX':
+            for p in (self.path).glob('*.cpp'):
+                self.c_paths.append(p)
+            for p in (self.path / 'src').glob('**/*.cpp'):
+                self.c_paths.append(p)
+                
+        assert len(self.c_paths) > 0
+
+        # gather compiled bytecode
+        self.bc_path = next((self.path / 'build' / 'llvm-ir').glob('**/*_llvmlink.bc'))
+        assert self.bc_path
 
     def transform_cmakelists(self, path):
         '''
@@ -107,33 +132,19 @@ class Version:
             file.write(filecontents)
         
         return llvmlink_target
-    
-    def build(self, force):
-        # Set up build directory
-        build_path = self.path / 'build'
 
-        # Skip if built already unless we wanna HULK SMASH
-        if build_path.exists():
-            if force:
-                shutil.rmtree(build_path)
-            else:
-                print(f'Version {self.path} is already built, skipping')
-                return
+    def cmake(self, target):
+        '''
+        Run CMake with the given target
+        '''
 
-        build_path.mkdir(exist_ok=True)
-
-        # Transform CMakeLists.txt
-        root_cmakelist = self.path / 'CMakeLists.txt'
-        llvmlink_target = self.transform_cmakelists(root_cmakelist)
-
-        # Run CMake
         compile_env = os.environ.copy()
         if self.language == 'C':
             compile_env['CC'] = 'clang'
         elif self.language == 'CXX':
             compile_env['CXX'] = 'clang++'
-        subprocess.run(args=['cmake', '-B', str(build_path), str(self.path)], env=compile_env)
-        subprocess.run(args=['cmake', '--build', str(build_path), '--target', llvmlink_target, '--verbose'], env=compile_env)
+        subprocess.run(args=['cmake', '-B', str(self.build_path), str(self.path)], env=compile_env)
+        subprocess.run(args=['cmake', '--build', str(self.build_path), '--target', target, '--verbose'], env=compile_env)
 
 def main():
     cm=CompileManager(Path("./tmp").absolute())
