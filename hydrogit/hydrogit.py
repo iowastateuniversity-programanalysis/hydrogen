@@ -47,7 +47,8 @@ class HydroGit:
             for c_path in version.c_paths:
                 args.append(c_path)
 
-        cmd=([str(self.hydrogen_binary)]+[str(arg) for arg in args])
+        cmd = [str(self.hydrogen_binary)] + [str(arg) for arg in args]
+        print(' '.join(cmd))
 
         subprocess.run(cmd)
 
