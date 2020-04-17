@@ -52,22 +52,21 @@ class HydroGit:
 
         subprocess.run(cmd)
 
-def demo_override():
+def demo_override(force_pull, force_build):
     # setup
     hg=HydroGit()
     hg.setup()
 
     # clone
-    hg.clone()
+    hg.clone(force_pull)
 
     # override clone
     # hg.tmp=hg.wd/"yolotests"
-    hg.setup()
+    # hg.setup()
 
     # fake compilation
-    hg.compiler.run_all()
+    hg.compiler.run_all(force_build)
     for version in hg.compiler.versions:
-        # Fix this benji!!??!?!?!!?
         for p in (version.path / 'src').glob('**/*.cpp'):
             version.c_paths.append(p)
         for p in (version.path / 'src').glob('**/*.c'):
@@ -79,4 +78,21 @@ def demo_override():
     hg.hydrogen()
 
 if __name__ == '__main__':
-    demo_override()
+    from argparse import ArgumentParser
+    parser = ArgumentParser(prog='python hydrogit.py')
+    parser.add_argument(
+        '-p',
+        '--force-pull',
+        dest='force_pull',
+        help='even if an existing destination version has been pulled, remove it and pull again',
+        default=False)
+    parser.add_argument(
+        '-b',
+        '--force-build',
+        dest='force_build',
+        help='even if an existing destination version has been built, remove it and build again',
+        default=False)
+
+    args = parser.parse_args()
+
+    demo_override(args.force_pull, args.force_build)
