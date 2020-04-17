@@ -10,14 +10,24 @@ class CompileManager:
         self.versions=[]
 
 
-    def run_all(self):
+    def run_all(self, force=False):
         for version_path in Path(self.tmp).iterdir():
             if version_path.is_dir() and version_path.name!="cloned":
-                self.run(version_path)
+                self.run(version_path, force)
 
-    def run(self, version_path):
+    def run(self, version_path, force=False):
         ver=Version(version_path)
         self.versions.append(ver)
+        
+        # Set up build directory
+        build_path = version_path / 'build'
+
+        # Skip if built already unless we wanna HULK SMASH
+        if build_path.exists() and not force:
+            print(f'Version {version_path} is already built, skipping')
+            return
+        
+        build_path.mkdir()
 
         # Transform CMakeLists.txt
         # for cmakelist in version_path.glob('**/CMakeLists.txt'):
@@ -70,9 +80,6 @@ llvmir_attach_link_target({llvmlink_target_name} {target_name}_bc -S)
             file.write(filecontents)
 
         # Run CMake
-        build_path = version_path / 'build'
-        build_path.mkdir()
-
         compile_env = os.environ.copy()
         compile_env['CXX'] = 'clang++'
         compile_env['C'] = 'clang'
