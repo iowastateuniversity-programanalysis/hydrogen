@@ -17,7 +17,8 @@
 
 # Improvements
 
-- Give repo and list of ID's to pull in command-line arguments
+- Auto detect language
+- Give repo and list of ID's in the command-line arguments
 - Make it work for nested `CMakeLists.txt`.
   1. For every call to `add_subdir`, add that dir's `CMakeLists.txt` to the list.
   1. Transform all `CMakeLists.txt`.
