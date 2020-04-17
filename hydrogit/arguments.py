@@ -7,7 +7,7 @@ def get_args():
         '-p',
         '--force-pull',
         dest='force_pull',
-        help='remove existing versions and pull again. Default false.',
+        help='remove existing versions and pull again',
         default=False,
         )
 
@@ -15,7 +15,7 @@ def get_args():
         '-b',
         '--force-build',
         dest='force_build',
-        help='remove existing versions and build again. Default false.',
+        help='remove existing versions and build again',
         default=False,
         )
 
@@ -23,7 +23,7 @@ def get_args():
         '-l',
         '--language',
         dest='language',
-        help='compile with this language - should be C or CXX. Default CXX.',
+        help='compile with this language - should be C or CXX',
         default='CXX',
         )
         
