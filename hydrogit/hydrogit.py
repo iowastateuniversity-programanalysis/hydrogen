@@ -1,6 +1,7 @@
 from git_stuff import GitManager
 from compilation import CompileManager
 from hydrogen import HydrogenAdapter
+from arguments import get_args
 import os
 from pathlib import Path
 
@@ -40,35 +41,7 @@ def run(url, commit_ids, force_pull, force_build, language):
     hg.hydrogen()
 
 if __name__ == '__main__':
-    from argparse import ArgumentParser
-    parser = ArgumentParser(prog='python hydrogit.py')
-    parser.add_argument(
-        '-p',
-        '--force-pull',
-        dest='force_pull',
-        help='remove existing versions and pull again',
-        default=False,
-        )
-    parser.add_argument(
-        '-b',
-        '--force-build',
-        dest='force_build',
-        help='remove existing versions and build again',
-        default=False,
-        )
-    parser.add_argument(
-        '-l',
-        '--language',
-        dest='language',
-        help='compile with this language - should be C or CXX',
-        default='CXX',
-        )
-        
-    parser.add_argument('url')
-    parser.add_argument('first_version')
-    parser.add_argument('latter_versions', nargs='+')
-
-    args = parser.parse_args()
+    args = get_args()
 
     commit_ids = [args.first_version, *args.latter_versions]
 
