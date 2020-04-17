@@ -12,7 +12,7 @@ class HydroGit:
         wd = (Path(__file__).parent.absolute())
         tmp = wd / "tmp"
         self.git_manager=GitManager(git_url, tmp)
-        self.compiler=CompileManager(tmp, language)
+        self.compiler=CompileManager(language, tmp)
         self.hydrogen_manager=HydrogenAdapter(wd / "../buildninja/Hydrogen.out")
 
     def clone(self, force):

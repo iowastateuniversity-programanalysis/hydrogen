@@ -9,10 +9,10 @@ cmake_utils_dir = (Path(__file__).parent / 'llvm-ir-cmake-utils' / 'cmake').reso
 assert cmake_utils_dir.exists()
 
 class CompileManager:
-    def __init__(self, tmp, language):
+    def __init__(self, language, tmp):
+        self.language=language
         self.tmp=tmp
         self.versions_built=[]
-        self.language=language
 
     def build_all(self, force):
         '''
