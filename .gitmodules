@@ -1,0 +1,3 @@
+[submodule "hydrogit/llvm-ir-cmake-utils"]
+	path = hydrogit/llvm-ir-cmake-utils
+	url = https://github.com/compor/llvm-ir-cmake-utils.git
