@@ -1,7 +1,0 @@
-Input Args:
-./build/Hydrogen.out  ./TestPrograms/OSS/fiche_2/prog.bc  ./TestPrograms/OSS/fiche_3/prog.bc  ::  ./TestPrograms/OSS/fiche_2/fiche.c  ./TestPrograms/OSS/fiche_2/main.c  ::  ./TestPrograms/OSS/fiche_3/fiche.c  ./TestPrograms/OSS/fiche_3/main.c  
-Finished Building MVICFG in 555ms
-Nodes: 1037
-Edges: 1199
-Version 2 added 10 paths
-Version 2 removed 8 paths
