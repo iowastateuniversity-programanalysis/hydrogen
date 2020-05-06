@@ -31,13 +31,13 @@ def get_args():
         help='remove existing versions and build again',
         default=False,
         )
-
+        
     parser.add_argument(
         '-l',
         '--language',
         dest='language',
         help='compile with this language - should be C or CXX',
-        default='CXX',
+        default='C',
         )
         
     parser.add_argument('url')
