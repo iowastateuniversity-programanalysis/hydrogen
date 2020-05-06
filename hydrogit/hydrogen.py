@@ -17,6 +17,5 @@ class HydrogenAdapter:
                 args.append(c_path)
 
         cmd = [str(self.hy)] + [str(arg) for arg in args]
-        print(' '.join(cmd))
 
         subprocess.run(cmd)

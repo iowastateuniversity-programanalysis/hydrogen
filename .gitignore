@@ -174,3 +174,4 @@ __pycache__
 hydrogit/tmp
 build
 buildninja
+.vscode/.ropeproject

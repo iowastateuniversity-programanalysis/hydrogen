@@ -80,6 +80,7 @@ class Version:
         assert len(self.c_paths) > 0
 
         # gather compiled bytecode
+        # todo: make it get all bc's
         self.bc_path = next((self.build_path / 'llvm-ir').glob('**/*_hydrogit_llvm_link.bc'))
         assert self.bc_path
 
@@ -98,11 +99,15 @@ include(LLVMIRUtil)
 enable_language(C)
 get_directory_property(_allTargets BUILDSYSTEM_TARGETS)
 foreach(_target ${{_allTargets}})
-    set_target_properties(${{_target}} PROPERTIES LINKER_LANGUAGE C)
-    add_compile_options(-c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S)
-    llvmir_attach_bc_target(${{_target}}_bc ${{_target}})
-    add_dependencies(${{_target}}_bc ${{_target}})
-    llvmir_attach_link_target(${{_target}}_hydrogit_llvm_link ${{_target}}_bc -S)
+    get_target_property(_type ${{_target}} TYPE)
+    if(_type STREQUAL "EXECUTABLE")
+        message(STATUS "Hydrogit adding IR for target ${{_target}} type ${{_type}}")
+        set_target_properties(${{_target}} PROPERTIES LINKER_LANGUAGE C)
+        add_compile_options(-c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S)
+        llvmir_attach_bc_target(${{_target}}_bc ${{_target}})
+        add_dependencies(${{_target}}_bc ${{_target}})
+        llvmir_attach_link_target(${{_target}}_hydrogit_llvm_link ${{_target}}_bc -S)
+    endif()
 endforeach(_target ${{_allTargets}})
 # end LLVM IR generation
 #{'='*10}'''
@@ -133,15 +138,16 @@ endforeach(_target ${{_allTargets}})
         assert(bc.exists() for bc in target_bcs)
         assert(len(target_bcs) > 0)
 
-        target_names = [p.stem for p in target_bcs]
-        print('building targets', target_names)
-        subprocess.run(args=[
-            'cmake',
-            '--build',
-            str(self.build_path),
-            '--target', ' '.join(target_names),
-            # '--verbose' # Uncomment to show Make output
-        ], env=compile_env)
+        for bc in target_bcs:
+            target = bc.stem
+            print('building target', target)
+            subprocess.run(args=[
+                'cmake',
+                '--build',
+                str(self.build_path),
+                '--target', target,
+                # '--verbose' # Uncomment to show Make output
+            ], env=compile_env)
 
 def main():
     cm=CompileManager('C', Path("./tmp").absolute())
