@@ -42,10 +42,10 @@ class Version:
 
         # Transform CMakeLists.txt
         root_cmakelist = self.path / 'CMakeLists.txt'
-        llvmlink_target = self.transform_cmakelists(root_cmakelist)
+        self.transform_cmakelists(root_cmakelist)
 
         # Run CMake and collect the output
-        self.cmake(llvmlink_target)
+        self.cmake()
         self.glob_files()
 
     def setup_build_path(self, force):
@@ -80,7 +80,7 @@ class Version:
         assert len(self.c_paths) > 0
 
         # gather compiled bytecode
-        self.bc_path = next((self.path / 'build' / 'llvm-ir').glob('**/*_llvmlink.bc'))
+        self.bc_path = next((self.build_path / 'llvm-ir').glob('**/*_hydrogit_llvm_link.bc'))
         assert self.bc_path
 
     def transform_cmakelists(self, path):
@@ -90,50 +90,26 @@ class Version:
 
         assert path.exists()
 
-        filecontents = ''
-        with path.open('r') as file:
-            # Find & replace target and project declarations
-            for line in file:
-                # Find target name
-                target_regex = r'add_executable\s*\(\s*([a-zA-Z0-9_]+)[^)]*\)'
-                target_match = re.search(target_regex, line)
-                if target_match:
-                    target = target_match.group(1)
-
-                # Replace project name
-                project_regex = r'project\s*\(\s*([a-zA-Z0-9_]+)[^)]*\)'
-                project_match = re.search(project_regex, line)
-                if project_match:
-                    project_name = project_match.group(1)
-                    line = re.sub(
-                        project_regex,
-                        f'project({project_name} C CXX)',
-                        line)
-
-                filecontents += line
-            
-            # Add llvmlink target if a target was found in this file
-            if target:
-                llvmlink_target = f'{target}_llvmlink'
-                to_add = f'''
-    # LLVM-IR Generation
-    list(APPEND CMAKE_MODULE_PATH "{cmake_utils_dir}")
-    include(LLVMIRUtil)
-    set_target_properties({target} PROPERTIES LINKER_LANGUAGE {self.language})
+        with path.open('a') as file:        
+            ir_gen = f'''
+#{'='*10}LLVM IR generation
+list(APPEND CMAKE_MODULE_PATH "{cmake_utils_dir}")
+include(LLVMIRUtil)
+enable_language(C)
+get_directory_property(_allTargets BUILDSYSTEM_TARGETS)
+foreach(_target ${{_allTargets}})
+    set_target_properties(${{_target}} PROPERTIES LINKER_LANGUAGE C)
     add_compile_options(-c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S)
-    llvmir_attach_bc_target({target}_bc {target})
-    add_dependencies({target}_bc {target})
-    llvmir_attach_link_target({llvmlink_target} {target}_bc -S)
-                '''
+    llvmir_attach_bc_target(${{_target}}_bc ${{_target}})
+    add_dependencies(${{_target}}_bc ${{_target}})
+    llvmir_attach_link_target(${{_target}}_hydrogit_llvm_link ${{_target}}_bc -S)
+endforeach(_target ${{_allTargets}})
+# end LLVM IR generation
+#{'='*10}'''
 
-                filecontents += to_add
+            file.write(ir_gen)
 
-        with path.open('w') as file:
-            file.write(filecontents)
-        
-        return llvmlink_target
-
-    def cmake(self, target):
+    def cmake(self):
         '''
         Run CMake with the given target
         '''
@@ -143,22 +119,33 @@ class Version:
             compile_env['CC'] = 'clang'
         elif self.language == 'CXX':
             compile_env['CXX'] = 'clang++'
+
         subprocess.run(args=[
             'cmake',
             '-B', str(self.build_path),
             str(self.path)
         ], env=compile_env)
+
+        llvm_ir_path = self.build_path / 'llvm-ir'
+        assert(llvm_ir_path.exists())
+
+        target_bcs = list(llvm_ir_path.glob('*_hydrogit_llvm_link'))
+        assert(bc.exists() for bc in target_bcs)
+        assert(len(target_bcs) > 0)
+
+        target_names = [p.stem for p in target_bcs]
+        print('building targets', target_names)
         subprocess.run(args=[
             'cmake',
             '--build',
             str(self.build_path),
-            '--target', target,
+            '--target', ' '.join(target_names),
             # '--verbose' # Uncomment to show Make output
         ], env=compile_env)
 
 def main():
-    cm=CompileManager(Path("./tmp").absolute())
-    cm.build_all()
+    cm=CompileManager('C', Path("./tmp").absolute())
+    cm.build_all(True)
 
 if __name__ == '__main__':
     main()
