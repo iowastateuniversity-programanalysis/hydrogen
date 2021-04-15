@@ -25,7 +25,7 @@ up.
 # Download and run the Docker from your system.
 $ docker run -it --name Hydrogen_Env ashwinkj/hydrogen_env
 # The above command will put you inside the Docker Container.
-$$ git clone https://git.linux.iastate.edu/HydrogenGroup/Hydrogen /home/Hydrogen/MVICFG
+$$ git clone https://github.com/iowastateuniversity-programanalysis/hydrogen /home/Hydrogen/MVICFG
 $$ cd /home/Hydrogen/MVICFG
 $$ mkdir BuildNinja
 $$ cmake -B BuildNinja -G Ninja .
@@ -60,7 +60,8 @@ $ ./Hydrogen.out ../TestPrograms/Buggy/ProgV1.bc ../TestPrograms/Correct/ProgV2.
  ../TestPrograms/Correct/Prog.c
 ```
 6) A python script `BuildSystem.py` is provided to ease the process of invoking the Hydrogen executable. It will also
- rebuild Hydrogen (if necessary) and transfer the resulting `MVICFG.dot` file into the parent directory.
+ rebuild Hydrogen (if necessary) and transfer the resulting `MVICFG.dot` file into the parent directory. *This python script
+ is an example to base your own scripts. You might need to adpat this into bash script if running in Docker.*
 
 ## Dependencies
 Hydrogen depends on the `LLVM Framework` and `Boost Libraries`. Roughly, the following are required for Hydrogen to
