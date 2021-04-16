@@ -18,7 +18,7 @@ up.
 ### Building Hydrogen
 1) Before building the project, make sure the [dependencies](#dependencies) are met. You can also make use of the
  [docker image](https://hub.docker.com/r/ashwinkj/hydrogen_env), where the environment is already set up for you.
-2) Clone `Hydrogen` from GitLab. If you are using the Docker, you can clone it into `/home/Hydrogen/MVICFG` folder.
+2) Clone `Hydrogen` from GitHub. If you are using the Docker, you can clone it into `/home/Hydrogen/MVICFG` folder.
 3) Compile `Hydrogen` with the help of `CMakeLists.txt`. You can also use `GNU Make`, if that is the preferred method.
 4) Assuming you are using the Docker and Ninja, the steps would be like below. But first [install](https://docs.docker.com/install/) Docker using the recommended method for your system.
 ```sh
