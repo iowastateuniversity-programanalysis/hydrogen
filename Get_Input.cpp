@@ -34,7 +34,7 @@ bool Hydrogen::processInputs(int c, char *files[]) {
       break;
     } // End check for hydrogenDemarcation
     countModules++;
-    Module *module = new Module();
+    auto *module = new Module();
     if (!module->setModule(countModules, file)) {
       return false;
     } // End check for module

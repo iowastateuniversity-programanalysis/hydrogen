@@ -5,7 +5,7 @@
  */
 #include "Diff_Util.hpp"
 namespace hydrogen_framework {
-void Diff_Ses::addSequence(const elem& e, long long beforeIdx, long long afterIdx, const int type) {
+void Diff_Ses::addSequence(const elem &e, long long beforeIdx, long long afterIdx, const int type) {
   elemInfo info;
   info.beforeIdx = beforeIdx;
   info.afterIdx = afterIdx;
