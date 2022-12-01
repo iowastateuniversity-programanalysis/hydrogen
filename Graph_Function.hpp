@@ -8,6 +8,7 @@
 
 #include <list>
 #include <string>
+#include <utility>
 namespace hydrogen_framework {
 /* Forward declaration */
 class Graph;
@@ -21,7 +22,7 @@ public:
   /**
    * Constructor
    */
-  Graph_Function(unsigned id) : functionID(id), funcGraph(nullptr) {}
+  explicit Graph_Function(unsigned id) : functionID(id), funcGraph(nullptr) {}
 
   /**
    * Destructor
@@ -31,12 +32,12 @@ public:
   /**
    * Set functionName
    */
-  void setFunctionName(std::string name) { functionName = name; }
+  void setFunctionName(std::string name) { functionName = std::move(name); }
 
   /**
    * Set functionFile
    */
-  void setFunctionFile(std::string name) { functionFile = name; }
+  void setFunctionFile(std::string name) { functionFile = std::move(name); }
 
   /**
    * Return true if functionFile is not empty
@@ -71,7 +72,7 @@ public:
   /**
    * Return functionID
    */
-  unsigned getFunctionID() { return functionID; }
+  unsigned getFunctionID() const { return functionID; }
 
   /**
    * Return functionFile
