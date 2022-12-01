@@ -14,17 +14,17 @@
 namespace hydrogen_framework {
 Graph *buildICFG(Module *mod, unsigned graphVersion) {
   std::unique_ptr<llvm::Module> &modPtr = mod->getPtr();
-  Graph *ICFG = new Graph(graphVersion);
+  auto *ICFG = new Graph(graphVersion);
   for (llvm::Function &F : (*modPtr)) {
     std::string funcName;
-    Graph_Function *funcGraph = new Graph_Function(ICFG->getNextID());
+    auto *funcGraph = new Graph_Function(ICFG->getNextID());
     if (F.hasName()) {
       funcName = F.getName();
     } else {
       funcName = "Unknown_Function";
     } // End check for function name
     funcGraph->setFunctionName(funcName);
-    Graph_Line *currentLineGraph = new Graph_Line(graphVersion);
+    auto *currentLineGraph = new Graph_Line(graphVersion);
     for (llvm::BasicBlock &BB : F) {
       for (llvm::Instruction &I : BB) {
         unsigned int DILocLine = 0;
@@ -49,7 +49,7 @@ Graph *buildICFG(Module *mod, unsigned graphVersion) {
         std::string instLabel;
         llvm::raw_string_ostream rInstLabel(instLabel);
         I.print(rInstLabel);
-        Graph_Instruction *currentInstGraph = new Graph_Instruction();
+        auto *currentInstGraph = new Graph_Instruction();
         currentInstGraph->setInstructionLabel(instLabel);
         currentInstGraph->setInstructionID(ICFG->getNextID());
         llvm::Instruction *iTmp = &I;
@@ -84,7 +84,7 @@ std::list<Diff_Mapping> generateLineMapping(Module *firstMod, Module *secondMod)
     Diff_Mapping::sequence ALines, BLines;
     if (fileMatch != nextModuleFiles.end()) {
       /* Matching file exist */
-      processedFiles.push_back(boost::filesystem::path(iterFile).filename().c_str());
+      processedFiles.emplace_back(boost::filesystem::path(iterFile).filename().c_str());
       std::ifstream Aifs(iterFile.c_str());
       std::ifstream Bifs((*fileMatch).c_str());
       Diff_Mapping::elem buf;
@@ -96,7 +96,7 @@ std::list<Diff_Mapping> generateLineMapping(Module *firstMod, Module *secondMod)
       } // End loop for Bifs
     } else {
       /* File no longer exist */
-      processedFiles.push_back(boost::filesystem::path(iterFile).filename().c_str());
+      processedFiles.emplace_back(boost::filesystem::path(iterFile).filename().c_str());
       std::ifstream Aifs(iterFile.c_str());
       Diff_Mapping::elem buf;
       while (getline(Aifs, buf)) {
@@ -113,11 +113,12 @@ std::list<Diff_Mapping> generateLineMapping(Module *firstMod, Module *secondMod)
   } // End loop for first module file processing
   /* Check for new files in next module */
   for (auto iterFile : (secondMod)->getFiles()) {
-    auto fileMatch = std::find_if(std::begin(processedFiles), std::end(processedFiles),
-                                  [=](std::string f) { return (f == boost::filesystem::path(iterFile).filename()); });
+    auto fileMatch = std::find_if(std::begin(processedFiles), std::end(processedFiles), [=](const std::string &f) {
+      return (f == boost::filesystem::path(iterFile).filename());
+    });
     if (fileMatch == processedFiles.end()) {
       /* New file exist */
-      processedFiles.push_back(boost::filesystem::path(iterFile).filename().c_str());
+      processedFiles.emplace_back(boost::filesystem::path(iterFile).filename().c_str());
       Diff_Mapping::sequence ALines, BLines;
       std::ifstream Bifs(iterFile.c_str());
       Diff_Mapping::elem buf;
@@ -136,7 +137,7 @@ std::list<Diff_Mapping> generateLineMapping(Module *firstMod, Module *secondMod)
   return diffMap;
 } // End generateLineMapping
 
-std::list<Graph_Line *> getGraphLinesGivenLine(Graph *graph, long long lineNo, std::string fileName) {
+std::list<Graph_Line *> getGraphLinesGivenLine(Graph *graph, long long lineNo, const std::string &fileName) {
   std::list<Graph_Line *> graphLines;
   bool foundLine = false;
   for (auto func : graph->getGraphFunctions()) {
@@ -197,8 +198,8 @@ std::string getGraphLineInstructionsAsString(Graph_Line *line) {
   return lineString;
 } // End getGraphLineInstructionsAsString
 
-Graph_Line *resolveMatchedLinesWithNoExtactStringMatch(std::list<Graph_Line *> matchedLines, std::string lineFromString,
-                                                       unsigned int graphVersion) {
+Graph_Line *resolveMatchedLinesWithNoExactStringMatch(const std::list<Graph_Line *> &matchedLines,
+                                                      const std::string &lineFromString, unsigned int graphVersion) {
   int minDiff = std::numeric_limits<int>::max();
   Graph_Line *tmp = nullptr;
   for (auto line : matchedLines) {
@@ -228,7 +229,7 @@ Graph_Line *resolveMatchedLinesWithNoExtactStringMatch(std::list<Graph_Line *> m
     std::cerr << "The heuristically matched line for " << tmp->getLineNumber(graphVersion) << "might be incorrect\n";
   } // End check for minDiff
   return tmp;
-} // End resolveMatchedLinesWithNoExtactStringMatch
+} // End resolveMatchedLinesWithNoExactStringMatch
 
 Graph_Line *findMatchedLine(Graph_Line *t, Graph *matchTo, Graph *matchFrom, Diff_Mapping diff) {
   /* Extra check to ensure correct diff File */
@@ -286,8 +287,8 @@ Graph_Line *findMatchedLine(Graph_Line *t, Graph *matchTo, Graph *matchFrom, Dif
               return matchedLines.front();
             } else {
               std::string lineFromString = getGraphLineInstructionsAsString(t);
-              return resolveMatchedLinesWithNoExtactStringMatch(matchedLines, lineFromString,
-                                                                matchTo->getGraphVersion());
+              return resolveMatchedLinesWithNoExactStringMatch(matchedLines, lineFromString,
+                                                               matchTo->getGraphVersion());
             } // End check for matchedLines size
           }   // End check for empty matchedLines
         }     // End check for Function name check
@@ -301,9 +302,7 @@ Graph_Edge *getEdge(Graph_Instruction *fromNode, Graph_Instruction *toNode, Grap
   for (auto edge : fromNode->getInstructionEdges()) {
     if (edge->getEdgeFrom() == fromNode) {
       if (edge->getEdgeTo() == toNode) {
-        if (type == edge->getEdgeType()) {
-          return edge;
-        } else if (type == Graph_Edge::ANY) {
+        if (type == edge->getEdgeType() || type == Graph_Edge::ANY) {
           return edge;
         } // End check for ANY
       }   // End check for toNode
@@ -371,19 +370,20 @@ std::list<Graph_Line *> addToMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mapping dif
       /* Create new one if it doesn't exist */
       Graph_Function *mvicfgFunc;
       if (findMvicfgFunc == mvicfgFunctions.end()) {
+        // TODO: Is this a bug?
         mvicfgFunc = new Graph_Function(MVICFG->getNextID());
-        Graph_Function *mvicfgFunc = new Graph_Function(MVICFG->getNextID());
+        auto *mvicfgFunc = new Graph_Function(MVICFG->getNextID());
         mvicfgFunc->setFunctionName(func->getFunctionName());
         mvicfgFunc->setFunctionFile(func->getFunctionFile());
       } else {
         mvicfgFunc = *findMvicfgFunc;
       } // End check for findMvicfgFunc
       /* Iterating through addedLine and adding instructions to MVICFG */
-      Graph_Line *newLine = new Graph_Line(ICFG->getGraphVersion());
+      auto *newLine = new Graph_Line(ICFG->getGraphVersion());
       newLine->setLineNumber(MVICFG->getGraphVersion(), 0);
       newLine->setLineNumber(ICFG->getGraphVersion(), addedLine->getLineNumber(ICFG->getGraphVersion()));
       for (auto inst : addedLine->getLineInstructions()) {
-        Graph_Instruction *newInstruction = new Graph_Instruction();
+        auto *newInstruction = new Graph_Instruction();
         newInstruction->setInstructionLabel(inst->getInstructionLabel());
         newInstruction->setInstructionID(MVICFG->getNextID());
         newInstruction->setInstructionPtr(inst->getInstructionPtr());
@@ -445,7 +445,7 @@ std::list<Graph_Line *> addToMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mapping dif
                       edgeType = Graph_Edge::MVICFG_ADD;
                     } // End check for foundEdge
                   }   // End check for getEdgeType
-                  Graph_Edge *newEdge = new Graph_Edge(tDashInst, nInst, edgeType, Version);
+                  auto *newEdge = new Graph_Edge(tDashInst, nInst, edgeType, Version);
                   MVICFG->addEdge(tDashInst, nInst, newEdge);
                 } else {
                   checkEdge->pushEdgeVersions(Version);
@@ -477,7 +477,7 @@ std::list<Graph_Line *> addToMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mapping dif
                       edgeType = Graph_Edge::MVICFG_ADD;
                     } // End check for foundEdge
                   }   // End check for edgeType
-                  Graph_Edge *newEdge = new Graph_Edge(nInst, tDashInst, edgeType, Version);
+                  auto *newEdge = new Graph_Edge(nInst, tDashInst, edgeType, Version);
                   MVICFG->addEdge(nInst, tDashInst, newEdge);
                 } else {
                   checkEdge->pushEdgeVersions(Version);
@@ -520,8 +520,8 @@ Graph_Instruction *getMatchedInstructionFromGraph(Graph *graphToMatch, Graph_Ins
   return nullptr;
 } // End getMatchedInstructionFromGraph
 
-void getEdgesForAddedLines(Graph *MVICFG, Graph *ICFG, std::list<Graph_Line *> addedLines,
-                           std::list<Diff_Mapping> diffMap, unsigned Version) {
+void getEdgesForAddedLines(Graph *MVICFG, Graph *ICFG, const std::list<Graph_Line *> &addedLines,
+                           const std::list<Diff_Mapping> &diffMap, unsigned Version) {
   for (auto line : addedLines) {
     for (auto lineInst : line->getLineInstructions()) {
       Graph_Instruction *lineDashInst = getMatchedInstructionFromGraph(ICFG, lineInst);
@@ -545,7 +545,7 @@ void getEdgesForAddedLines(Graph *MVICFG, Graph *ICFG, std::list<Graph_Line *> a
         } // End check for to
         Graph_Edge *checkEdge = getEdge(from, to, edgeDash->getEdgeType());
         if (!checkEdge) {
-          Graph_Edge *newEdge = new Graph_Edge(from, to, edgeDash->getEdgeType(), ICFG->getGraphVersion());
+          auto *newEdge = new Graph_Edge(from, to, edgeDash->getEdgeType(), ICFG->getGraphVersion());
           MVICFG->addEdge(from, to, newEdge);
         } // End check for checkEdge
       }   // End loop for adding edges
@@ -644,7 +644,7 @@ std::list<Graph_Line *> deleteFromMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mappin
                                 edgeType = Graph_Edge::MVICFG_DEL;
                               } // End check for foundEdge
                             }   // End check for getEdgeType
-                            Graph_Edge *newEdge = new Graph_Edge(mInst, nInst, edgeType, Version);
+                            auto *newEdge = new Graph_Edge(mInst, nInst, edgeType, Version);
                             MVICFG->addEdge(mInst, nInst, newEdge);
                           } // End check for checkEdge
                         } else if (findMSucc != succDash.end()) {
@@ -674,7 +674,7 @@ std::list<Graph_Line *> deleteFromMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mappin
                                 edgeType = Graph_Edge::MVICFG_DEL;
                               } // End check for foundEdge
                             }   // End check for getEdgeType
-                            Graph_Edge *newEdge = new Graph_Edge(nInst, mInst, edgeType, Version);
+                            auto *newEdge = new Graph_Edge(nInst, mInst, edgeType, Version);
                             MVICFG->addEdge(nInst, mInst, newEdge);
                           } // End check for checkEdge
                         }   // End check for Predecessors and Successors

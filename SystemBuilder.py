@@ -6,9 +6,9 @@ import os
 print("Compiling Hydrogen")
 os.chdir("./build")
 os.system("ninja")
-if (os.path.isfile("./Result.txt")):
+if os.path.isfile("./Result.txt"):
     os.system("rm ./Result.txt")
-if (os.path.isfile("./MVICFG.dot")):
+if os.path.isfile("./MVICFG.dot"):
     os.system("rm ./MVICFG.dot")
 os.chdir("../")
 ########################################

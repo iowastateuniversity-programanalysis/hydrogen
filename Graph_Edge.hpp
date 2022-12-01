@@ -58,7 +58,7 @@ public:
   /**
    * Push version to back of edgeVersions
    */
-  void pushEdgeVersions(int ver) { edgeVersions.push_back(ver); }
+  void pushEdgeVersions(unsigned int ver) { edgeVersions.push_back(ver); }
 
   /**
    * Return edgeFrom

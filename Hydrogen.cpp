@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
       std::map<Graph_Line *, Graph_Line *> matchedLines; /**<Map From ICFG Graph_Line to MVICFG Graph_Line */
       std::list<Diff_Mapping> diffMap = generateLineMapping(*iterModule, *iterModuleNext);
       Graph *ICFG = buildICFG(*iterModuleNext, ++graphVersion);
-      for (auto iter : diffMap) {
+      for (const auto& iter : diffMap) {
         /* iter.printFileInfo(); */
         std::list<Graph_Line *> iterAdd = addToMVICFG(MVICFG, ICFG, iter, graphVersion);
         std::list<Graph_Line *> iterDel = deleteFromMVICFG(MVICFG, ICFG, iter, graphVersion);
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
       /* Update Map Version */
       MVICFG->setGraphVersion(graphVersion);
     } // End check for iterModuleEnd
-  } // End loop for Module
+  }   // End loop for Module
   /* Stop timer */
   auto mvicfgStop = std::chrono::high_resolution_clock::now();
   auto mvicfgBuildTime = std::chrono::duration_cast<std::chrono::milliseconds>(mvicfgStop - mvicfgStart);
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     return 5;
   } // End check for Result file
   rFile << "Input Args:\n";
-  for (auto i = 0; i < argc; ++ i) {
+  for (auto i = 0; i < argc; ++i) {
     rFile << argv[i] << "  ";
   } // End loop for writing arguments
   rFile << "\n";

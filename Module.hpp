@@ -46,7 +46,7 @@ public:
   /**
    * Return modVersion
    */
-  int getVersion() { return modVersion; }
+  int getVersion() const { return modVersion; }
 
   /**
    * Return modPtr

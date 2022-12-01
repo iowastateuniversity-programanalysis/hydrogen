@@ -37,7 +37,7 @@ std::list<Diff_Mapping> generateLineMapping(Module *firstMod, Module *secondMod)
  * Get Graph_Line(s) from given source line
  * Returns empty list if no Graph_Line is not found
  */
-std::list<Graph_Line *> getGraphLinesGivenLine(Graph *graph, long long lineNo, std::string fileName);
+std::list<Graph_Line *> getGraphLinesGivenLine(Graph *graph, long long lineNo, const std::string &fileName);
 
 /**
  * Get predecessor of a given Graph_Line
@@ -61,8 +61,8 @@ std::string getGraphLineInstructionsAsString(Graph_Line *line);
  * Currently will throw an warning if heuristic skips more than 2 OpCode to match the lines
  * Returns NULL if no heuristic match is found
  */
-Graph_Line *resolveMatchedLinesWithNoExtactStringMatch(std::list<Graph_Line *> matchedLines, std::string lineFromString,
-                                                       unsigned int graphVersion);
+Graph_Line *resolveMatchedLinesWithNoExactStringMatch(const std::list<Graph_Line *> &matchedLines,
+                                                      const std::string &lineFromString, unsigned int graphVersion);
 
 /**
  * Find matched Node
@@ -106,8 +106,8 @@ Graph_Instruction *getMatchedInstructionFromGraph(Graph *graphToMatch, Graph_Ins
 /**
  * Import edges from ICFG instruction for added Graph_Line
  */
-void getEdgesForAddedLines(Graph *MVICFG, Graph *ICFG, std::list<Graph_Line *> addedLines,
-                           std::list<Diff_Mapping> diffMap, unsigned Version);
+void getEdgesForAddedLines(Graph *MVICFG, Graph *ICFG, const std::list<Graph_Line *> &addedLines,
+                           const std::list<Diff_Mapping> &diffMap, unsigned Version);
 
 /**
  * Mark deleted nodes in MVICFG and returns the deleted MVICFG lines
