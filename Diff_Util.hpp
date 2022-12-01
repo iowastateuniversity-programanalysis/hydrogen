@@ -18,11 +18,11 @@ public:
   /**
    * Constructor
    */
-  Diff_Compare() {}
+  Diff_Compare() = default;
   /**
    * Virtual Destructor
    */
-  virtual ~Diff_Compare() {}
+  virtual ~Diff_Compare() = default;
   /**
    * Comparison function
    * Return TRUE if equal
@@ -38,12 +38,12 @@ public:
   /**
    * Constructor
    */
-  Diff_Vars() {}
+  Diff_Vars() = default;
 
   /**
    * Virtual Destructor
    */
-  virtual ~Diff_Vars() {}
+  virtual ~Diff_Vars() = default;
 
   /**
    * Type of edit for SES
@@ -102,11 +102,11 @@ public:
   /**
    * Constructor
    */
-  Diff_Sequence() {}
+  Diff_Sequence() = default;
   /**
    * Virtual Destructor
    */
-  virtual ~Diff_Sequence() {}
+  ~Diff_Sequence() override = default;
 
   /**
    * Return sequence
@@ -117,7 +117,7 @@ public:
    * Add to sequence
    */
 
-  void addSequence(elem e) { sequence.push_back(e); }
+  void addSequence(const elem &e) { sequence.push_back(e); }
 
 protected:
   elemVec sequence; /**< Store sequence of elems as vector */
@@ -136,12 +136,14 @@ public:
   /**
    * Constructor with one argument
    */
-  Diff_Ses(bool moveDel) : onlyAdd(true), onlyDelete(true), onlyCopy(true), deletesFirst(moveDel) { nextDeleteIdx = 0; }
+  explicit Diff_Ses(bool moveDel) : onlyAdd(true), onlyDelete(true), onlyCopy(true), deletesFirst(moveDel) {
+    nextDeleteIdx = 0;
+  }
 
   /**
    * Destructor
    */
-  ~Diff_Ses() {}
+  ~Diff_Ses() override = default;
 
   /**
    * Return onlyAdd
@@ -171,7 +173,7 @@ public:
   /**
    * Add sequence
    */
-  void addSequence(elem e, long long beforeIdx, long long afterIdx, const int type);
+  void addSequence(const elem &e, long long beforeIdx, long long afterIdx, const int type);
 
   /**
    * Return sequence

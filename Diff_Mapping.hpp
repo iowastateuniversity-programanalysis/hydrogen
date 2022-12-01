@@ -31,7 +31,7 @@ public:
   /**
    * Populate line mapping
    */
-  void putMapping(const std::vector<sesElem>& seqVector);
+  void putMapping(const std::vector<sesElem> &seqVector);
 
   /**
    * Return lineMap
