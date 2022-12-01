@@ -9,8 +9,8 @@ namespace hydrogen_framework {
 std::string Graph_Edge::getPrintableEdgeVersions() {
   std::string ver;
   for (auto v : edgeVersions) {
-    ver = ver + "V" + std::to_string(v) + ",";
-  } // End loop for edgveVersions
+    ver += "V" + std::to_string(v) + ",";
+  } // End loop for edgeVersions
   ver.pop_back();
   return ver;
 } // End getPrintableEdgeVersions
