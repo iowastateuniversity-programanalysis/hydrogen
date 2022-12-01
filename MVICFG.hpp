@@ -124,5 +124,16 @@ std::map<Graph_Line *, Graph_Line *> matchedInMVICFG(Graph *MVICFG, Graph *ICFG,
  */
 void updateMVICFGVersion(Graph *MVICFG, std::list<Graph_Line *> addedLines, std::list<Graph_Line *> deletedLines,
                          std::list<Diff_Mapping> diffMap, unsigned Version);
+
+/**
+ * Calculate the number of added paths between two versions
+ */
+unsigned long long calculateAddedPaths(Graph *MVICFG, unsigned version1, unsigned version2);
+
+/**
+ * Calculate the number of deleted paths between two versions
+ */
+unsigned long long calculateDeletedPaths(Graph *MVICFG, unsigned version1, unsigned version2);
+
 } // namespace hydrogen_framework
 #endif

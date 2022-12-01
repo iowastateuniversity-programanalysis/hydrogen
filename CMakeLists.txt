@@ -3,7 +3,7 @@
 ##########################################
 cmake_minimum_required(VERSION 3.10)
 project(Hydrogen)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Boost REQUIRED COMPONENTS filesystem)
@@ -14,7 +14,7 @@ find_package(LLVM REQUIRED)
 ####     LLVM Configuration       ####
 ##########################################
 set(CMAKE CXX FLAGS "-march=native -O3 -pipe -flto=thin")
-set(LDFLAGS  "-Wl,-O3")
+set(LDFLAGS "-Wl,-O3")
 set(CMAKE_EXE_LINKER_FLAGS "${LDFLAGS}")
 ##########################################
 ####        Source file Config        ####
@@ -38,6 +38,8 @@ set(SOURCE_FILES
         Hydrogen.cpp
         Module.cpp
         Module.hpp
+        Graph_Edge_Iterator.cpp
+        Graph_Edge_Iterator.hpp
         MVICFG.cpp
         MVICFG.hpp)
 

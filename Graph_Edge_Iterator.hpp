@@ -16,14 +16,14 @@ namespace hydrogen_framework {
 /**
  * Depth-first iterator for Graphs
  */
-class GraphEdgeIterator {
+class Graph_Edge_Iterator {
 public:
 
   /**
    * Constructor
    * Initialize ID to zero
    */
-  explicit GraphEdgeIterator(Graph* graph)
+  explicit Graph_Edge_Iterator(Graph* graph)
       : graph(graph), current_edge(*graph->getGraphEdges().begin()) {
     this->visited_edges.emplace(this->current_edge);
   }
@@ -31,7 +31,7 @@ public:
   /**
    * Increment operator for iterating list forward
    */
-  GraphEdgeIterator &operator++() noexcept;
+  Graph_Edge_Iterator &operator++() noexcept;
 
   /**
    * Get current edge

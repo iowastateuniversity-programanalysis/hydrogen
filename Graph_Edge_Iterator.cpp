@@ -9,7 +9,7 @@
 
 namespace hydrogen_framework {
 
-GraphEdgeIterator& GraphEdgeIterator::operator++() noexcept {
+Graph_Edge_Iterator& Graph_Edge_Iterator::operator++() noexcept {
 
   // If this iterator is already complete, do nothing
   if (this->current_edge == nullptr) return *this;
@@ -49,7 +49,7 @@ GraphEdgeIterator& GraphEdgeIterator::operator++() noexcept {
   return *this;
 }
 
-Graph_Edge* GraphEdgeIterator::operator*() const noexcept {
+Graph_Edge* Graph_Edge_Iterator::operator*() const noexcept {
   return this->current_edge;
 }
 

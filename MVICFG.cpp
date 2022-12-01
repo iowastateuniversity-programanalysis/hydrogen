@@ -10,6 +10,7 @@
 #include "Graph_Function.hpp"
 #include "Graph_Instruction.hpp"
 #include "Graph_Line.hpp"
+#include "Graph_Edge_Iterator.hpp"
 #include "Module.hpp"
 namespace hydrogen_framework {
 Graph *buildICFG(Module *mod, unsigned graphVersion) {
@@ -885,4 +886,14 @@ void updateMVICFGVersion(Graph *MVICFG, std::list<Graph_Line *> addedLines, std:
     }       // End check for edgeFromInst
   }         // End loop for updating Graph_Edge information
 } // End updateMVICFGVersion
+
+unsigned long long calculateAddedPaths(Graph *MVICFG, unsigned version1, unsigned version2) {
+  Graph_Edge_Iterator edge_iter = Graph_Edge_Iterator(MVICFG);
+  return 1;
+}
+
+unsigned long long calculateDeletedPaths(Graph *MVICFG, unsigned version1, unsigned version2) {
+  Graph_Edge_Iterator edge_iter = Graph_Edge_Iterator(MVICFG);
+  return 1;
+}
 } // namespace hydrogen_framework
