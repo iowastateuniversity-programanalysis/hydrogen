@@ -814,7 +814,7 @@ RECURSIVE              = NO
 
 EXCLUDE                = "./Benchmark/"
 EXCLUDE               += "./Build/"
-EXCLUDE               += "./BuildNinja/"
+EXCLUDE               += "./build/"
 EXCLUDE               += "./Docs/"
 EXCLUDE               += ".ycm_extra_conf.py"
 

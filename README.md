@@ -27,9 +27,9 @@ $ docker run -it --name Hydrogen_Env ashwinkj/hydrogen_env
 # The above command will put you inside the Docker Container.
 $$ git clone https://github.com/iowastateuniversity-programanalysis/hydrogen /home/Hydrogen/MVICFG
 $$ cd /home/Hydrogen/MVICFG
-$$ mkdir BuildNinja
-$$ cmake -B BuildNinja -G Ninja .
-$$ cd BuildNinja
+$$ mkdir build
+$$ cmake -B build -G Ninja .
+$$ cd build
 $$ ninja
 ```
 
@@ -55,7 +55,7 @@ $ clang -c -O0 -Xclang -disable-O0-optnone -g -emit-llvm -S Prog.c -o ProgV2.bc
 # Generic Command
 $ Hydrogen.out <Path-to-LLVMIR_1> <Path-to-LLVMIR_2> .. <Path-to-LLVMIR_N> :: <Path-to-file1-for-Prog_V1> ..\
  <Path-to-fileN-for-Prog_V1> :: <Path-to-file1-for-Prog_V2> .. <Path-to-fileN-for-Prog_V2> ..
-# Command for the above example from BuildNinja folder
+# Command for the above example from build folder
 $ ./Hydrogen.out ../TestPrograms/Buggy/ProgV1.bc ../TestPrograms/Correct/ProgV2.bc :: ../TestPrograms/Buggy/Prog.c ::\
  ../TestPrograms/Correct/Prog.c
 ```

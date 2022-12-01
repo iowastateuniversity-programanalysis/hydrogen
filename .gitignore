@@ -48,8 +48,7 @@
 ## Doc Folder:
 # Docs/
 ## Build Folder:
-Build/
-BuildNinja/
+build/
 .idea/
 .ccls-cache/
 ## Vim backup, undo and swap files
