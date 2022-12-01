@@ -23,7 +23,7 @@ public:
   /**
    * Constructor
    */
-  Graph_Instruction() : instructionID(0), instructionPtr(NULL), instructionLine(NULL) {}
+  Graph_Instruction() : instructionID(0), instructionPtr(nullptr), instructionLine(nullptr) {}
 
   /**
    * Destructor

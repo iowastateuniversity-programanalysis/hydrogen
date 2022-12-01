@@ -12,12 +12,12 @@ namespace hydrogen_framework {
 GraphEdgeIterator& GraphEdgeIterator::operator++() noexcept {
 
   // If this iterator is already complete, do nothing
-  if (this->current_edge == NULL) return *this;
+  if (this->current_edge == nullptr) return *this;
 
   auto outgoing_edges = this->current_edge->getEdgeTo()->getInstructionEdges();
 
-  Graph_Edge* next_edge = NULL;
-  while (next_edge == NULL) {
+  Graph_Edge* next_edge = nullptr;
+  while (next_edge == nullptr) {
 
     // Search subsequent edges for a valid one
     for (Graph_Edge* outgoing_edge : outgoing_edges) {
@@ -29,10 +29,10 @@ GraphEdgeIterator& GraphEdgeIterator::operator++() noexcept {
     }
 
     // If no valid subsequent edge was found
-    if (next_edge == NULL) {
+    if (next_edge == nullptr) {
       // If all nodes have been visited, we are done iterating
       if (this->previous_edges.empty()) {
-        this->current_edge = NULL;
+        this->current_edge = nullptr;
         return *this;
       }
       // Otherwise, step back up the graph

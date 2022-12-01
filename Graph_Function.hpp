@@ -21,7 +21,7 @@ public:
   /**
    * Constructor
    */
-  Graph_Function(unsigned id) : functionID(id), funcGraph(NULL) {}
+  Graph_Function(unsigned id) : functionID(id), funcGraph(nullptr) {}
 
   /**
    * Destructor

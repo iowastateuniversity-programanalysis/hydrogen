@@ -20,7 +20,7 @@ public:
   /**
    * Constructor
    */
-  Graph_Edge() : edgeFrom(NULL), edgeTo(NULL), edgeType(edgeTypes::ANY) {}
+  Graph_Edge() : edgeFrom(nullptr), edgeTo(nullptr), edgeType(edgeTypes::ANY) {}
 
   /**
    * Enumeration for type of edges

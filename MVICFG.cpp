@@ -187,7 +187,7 @@ std::string getGraphLineInstructionsAsString(Graph_Line *line) {
   /* Iterate through the Graph_Line and make a string representation of the Instruction OpCode */
   for (auto inst : line->getLineInstructions()) {
     /* If Ptr is not found, then it won't be present in the other version as well */
-    if (inst->getInstructionPtr() != NULL) {
+    if (inst->getInstructionPtr() != nullptr) {
       lineString.append(inst->getInstructionPtr()->getOpcodeName()).append(" ");
     } // End check for Instruction Ptr
   }   // End loop for Graph_Line
@@ -200,7 +200,7 @@ std::string getGraphLineInstructionsAsString(Graph_Line *line) {
 Graph_Line *resolveMatchedLinesWithNoExtactStringMatch(std::list<Graph_Line *> matchedLines, std::string lineFromString,
                                                        unsigned int graphVersion) {
   int minDiff = std::numeric_limits<int>::max();
-  Graph_Line *tmp = NULL;
+  Graph_Line *tmp = nullptr;
   for (auto line : matchedLines) {
     /* First remove matched OpCodes */
     std::string lineToString = getGraphLineInstructionsAsString(line);
@@ -236,7 +236,7 @@ Graph_Line *findMatchedLine(Graph_Line *t, Graph *matchTo, Graph *matchFrom, Dif
     std::cerr << "findMatchedLine is using wrong diff File\n";
     std::cerr << "Skipping match for " << t->getLineNumber(matchFrom->getGraphVersion()) << " from "
               << matchFrom->getGraphVersion() << " to " << matchTo->getGraphVersion() << "\n";
-    return NULL;
+    return nullptr;
   } // End check for diff File name
   unsigned lineFrom = t->getLineNumber(matchFrom->getGraphVersion());
   unsigned lineTo = 0;
@@ -294,7 +294,7 @@ Graph_Line *findMatchedLine(Graph_Line *t, Graph *matchTo, Graph *matchFrom, Dif
       }       // End check for File name
     }         // End loop for functions
   }           // End check for virtual node check
-  return NULL;
+  return nullptr;
 } // End findMatchedLine
 
 Graph_Edge *getEdge(Graph_Instruction *fromNode, Graph_Instruction *toNode, Graph_Edge::edgeTypes type) {
@@ -309,7 +309,7 @@ Graph_Edge *getEdge(Graph_Instruction *fromNode, Graph_Instruction *toNode, Grap
       }   // End check for toNode
     }     // End check for fromNode
   }       // End loop for Instructions
-  return NULL;
+  return nullptr;
 } // End getEdge
 
 Graph_Edge *getInBetweenEdge(Graph_Line *fromLine, Graph_Line *toLine) {
@@ -324,7 +324,7 @@ Graph_Edge *getInBetweenEdge(Graph_Line *fromLine, Graph_Line *toLine) {
       } // End check for checkEdge
     }   // End loop for toLine
   }     // End loop for fromLine
-  return NULL;
+  return nullptr;
 } // End getInBetweenEdge
 
 Graph_Line *getNewlyAdded(Graph *MVICFG, Graph *ICFG, Graph_Line *newLine, Diff_Mapping diff) {
@@ -343,7 +343,7 @@ Graph_Line *getNewlyAdded(Graph *MVICFG, Graph *ICFG, Graph_Line *newLine, Diff_
       }     // End check for function file
     }       // End loop for function
   }         // End check for addLines.end
-  return NULL;
+  return nullptr;
 } // End getNewlyAdded
 
 std::list<Graph_Line *> addToMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mapping diff, unsigned Version) {
@@ -501,7 +501,7 @@ Graph_Instruction *getMatchedInstructionFromGraph(Graph *graphToMatch, Graph_Ins
     for (auto line : func->getFunctionLines()) {
       std::list<Graph_Instruction *> lineInstList = line->getLineInstructions();
       std::_List_iterator<Graph_Instruction *> findInst;
-      if (instToMatch->getInstructionPtr() == NULL) {
+      if (instToMatch->getInstructionPtr() == nullptr) {
         /* This is a virtual node and they always share their line numbers */
         unsigned instToLineNumber = instToMatch->getGraphLine()->getLineNumber(graphToMatch->getGraphVersion());
         findInst = std::find_if(std::begin(lineInstList), std::end(lineInstList), [=](Graph_Instruction *inst) {
@@ -517,7 +517,7 @@ Graph_Instruction *getMatchedInstructionFromGraph(Graph *graphToMatch, Graph_Ins
       } // End check for findInst
     }   // End loop for line
   }     // End loop for func
-  return NULL;
+  return nullptr;
 } // End getMatchedInstructionFromGraph
 
 void getEdgesForAddedLines(Graph *MVICFG, Graph *ICFG, std::list<Graph_Line *> addedLines,

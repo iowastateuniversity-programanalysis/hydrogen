@@ -48,7 +48,7 @@ Graph_Instruction *Graph::findMatchedInstruction(llvm::Instruction *matchInst) {
       }   // End loop for inst
     }     // End loop for line
   }       // End loop for func
-  return NULL;
+  return nullptr;
 } // End findMatchedInstruction
 
 Graph_Instruction *Graph::findVirtualEntry(std::string funcName) {
@@ -63,7 +63,7 @@ Graph_Instruction *Graph::findVirtualEntry(std::string funcName) {
       }     // End loop for line
     }       // End check for function name
   }         // End loop for func
-  return NULL;
+  return nullptr;
 } // End findVirtualEntry
 
 Graph_Instruction *Graph::findVirtualExit(std::string funcName) {
@@ -78,7 +78,7 @@ Graph_Instruction *Graph::findVirtualExit(std::string funcName) {
       }     // End loop for line
     }       // End check for function name
   }         // End loop for func
-  return NULL;
+  return nullptr;
 } // End findVirtualExit
 
 void Graph::addBranchEdges() {
@@ -131,7 +131,7 @@ void Graph::addFunctionCallEdges() {
   Graph_Instruction *externalNode = new Graph_Instruction();
   externalNode->setInstructionID(getNextID());
   externalNode->setInstructionLabel("External_Node");
-  externalNode->setInstructionPtr(NULL);
+  externalNode->setInstructionPtr(nullptr);
   virtualNodeLine->pushLineInstruction(externalNode);
   virtualNodeFunc->pushFunctionLines(virtualNodeLine);
   pushGraphFunction(virtualNodeFunc);
@@ -203,7 +203,7 @@ void Graph::addVirtualNodes(Graph_Function *func) {
   Graph_Instruction *virtualNode = new Graph_Instruction();
   virtualNode->setInstructionID(getNextID());
   virtualNode->setInstructionLabel("Entry::" + funcName);
-  virtualNode->setInstructionPtr(NULL);
+  virtualNode->setInstructionPtr(nullptr);
   virtualLine->pushLineInstruction(virtualNode);
   auto *to = func->getFunctionLines().front()->getLineInstructions().front();
   func->pushFrontFunctionLines(virtualLine);
@@ -215,7 +215,7 @@ void Graph::addVirtualNodes(Graph_Function *func) {
   virtualNode = new Graph_Instruction();
   virtualNode->setInstructionID(getNextID());
   virtualNode->setInstructionLabel("Exit::" + funcName);
-  virtualNode->setInstructionPtr(NULL);
+  virtualNode->setInstructionPtr(nullptr);
   virtualLine->pushLineInstruction(virtualNode);
   auto *from = func->getFunctionLines().back()->getLineInstructions().back();
   func->pushFunctionLines(virtualLine);

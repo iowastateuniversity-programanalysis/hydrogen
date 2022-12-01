@@ -93,7 +93,7 @@ void Diff_Util::init() {
   } // End check for M < N
   delta = N - M;
   offset = M + 1;
-  fp = NULL;
+  fp = nullptr;
 } // End init
 
 long long Diff_Util::snake(const long long &k, const long long &above, const long long &below) {
