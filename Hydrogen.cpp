@@ -61,18 +61,23 @@ int main(int argc, char *argv[]) {
         matchedLines.insert(iterMatch.begin(), iterMatch.end());
       } // End loop for diffMap
       /* Update Map Edges */
-      getEdgesForAddedLines(MVICFG, ICFG, addedLines, diffMap, graphVersion);
+      getEdgesForAddedLines(MVICFG, ICFG, addedLines, diffMap);
       /* Update the matched lines to get new temporary variable mapping for old lines */
       updateMVICFGVersion(MVICFG, addedLines, deletedLines, diffMap, graphVersion);
       /* Update Map Version */
       MVICFG->setGraphVersion(graphVersion);
     } // End check for iterModuleEnd
   }   // End loop for Module
+
+  auto paths = calculateChangedPaths(MVICFG, 1, 2);
+  std::cout << "Added Paths: " << paths.first << std::endl;
+  std::cout << "Deleted Paths: " << paths.second << std::endl;
+
   /* Stop timer */
   auto mvicfgStop = std::chrono::high_resolution_clock::now();
-  auto mvicfgBuildTime = std::chrono::duration_cast<std::chrono::milliseconds>(mvicfgStop - mvicfgStart);
+  auto mvicfgBuildTime = std::chrono::duration_cast<std::chrono::nanoseconds>(mvicfgStop - mvicfgStart);
   MVICFG->printGraph("MVICFG");
-  std::cout << "Finished Building MVICFG in " << mvicfgBuildTime.count() << "ms\n";
+  std::cout << "Finished Building MVICFG in " << mvicfgBuildTime.count() << "ns\n";
   /* Write output to file */
   std::ofstream rFile("Result.txt", std::ios::trunc);
   if (!rFile.is_open()) {

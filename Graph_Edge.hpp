@@ -8,6 +8,7 @@
 
 #include <list>
 #include <string>
+#include <unordered_set>
 namespace hydrogen_framework {
 /* Forward Declaration */
 class Graph_Instruction;
@@ -32,7 +33,7 @@ public:
    */
   Graph_Edge(Graph_Instruction *from, Graph_Instruction *to, edgeTypes type, unsigned ver)
       : edgeFrom(from), edgeTo(to), edgeType(type) {
-    edgeVersions.push_back(ver);
+    edgeVersions.emplace(ver);
   }
 
   /**
@@ -58,7 +59,7 @@ public:
   /**
    * Push version to back of edgeVersions
    */
-  void pushEdgeVersions(unsigned int ver) { edgeVersions.push_back(ver); }
+  void pushEdgeVersions(unsigned int ver) { edgeVersions.emplace(ver); }
 
   /**
    * Return edgeFrom
@@ -78,7 +79,7 @@ public:
   /**
    * Return edgeVersions
    */
-  std::list<unsigned> getEdgeVersions() { return edgeVersions; }
+  std::unordered_set<unsigned> getEdgeVersions() { return edgeVersions; }
 
   /**
    * Get printable edgeVersions
@@ -95,7 +96,7 @@ private:
   Graph_Instruction *edgeFrom;      /**< From Instruction */
   Graph_Instruction *edgeTo;        /**< To Instruction */
   edgeTypes edgeType;               /**< Edge Type */
-  std::list<unsigned> edgeVersions; /**< Container to store edge's versions */
+  std::unordered_set<unsigned> edgeVersions; /**< Container to store edge's versions */
 };                                  // End Graph_Edge Class
 } // namespace hydrogen_framework
 #endif

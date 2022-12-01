@@ -107,7 +107,7 @@ Graph_Instruction *getMatchedInstructionFromGraph(Graph *graphToMatch, Graph_Ins
  * Import edges from ICFG instruction for added Graph_Line
  */
 void getEdgesForAddedLines(Graph *MVICFG, Graph *ICFG, const std::list<Graph_Line *> &addedLines,
-                           const std::list<Diff_Mapping> &diffMap, unsigned Version);
+                           const std::list<Diff_Mapping> &diffMap);
 
 /**
  * Mark deleted nodes in MVICFG and returns the deleted MVICFG lines
@@ -128,12 +128,19 @@ void updateMVICFGVersion(Graph *MVICFG, std::list<Graph_Line *> addedLines, std:
 /**
  * Calculate the number of added paths between two versions
  */
-unsigned long long calculateAddedPaths(Graph *MVICFG, unsigned version1, unsigned version2);
+unsigned long long calculateAddedPaths(Graph *MVICFG, unsigned version_1, unsigned version_2);
 
 /**
  * Calculate the number of deleted paths between two versions
  */
-unsigned long long calculateDeletedPaths(Graph *MVICFG, unsigned version1, unsigned version2);
+unsigned long long calculateDeletedPaths(Graph *MVICFG, unsigned version_1, unsigned version_2);
+
+/**
+ * Calculate the number of added and deleted paths between two versions
+ * Returns a pair containing number of added and deleted paths respectively
+ */
+std::pair<unsigned long long, unsigned long long> calculateChangedPaths(Graph *MVICFG, unsigned version_1,
+                                                                        unsigned version_2);
 
 } // namespace hydrogen_framework
 #endif

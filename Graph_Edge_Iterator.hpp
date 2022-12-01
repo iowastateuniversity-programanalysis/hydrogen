@@ -10,6 +10,8 @@
 #include <unordered_set>
 #include "Graph.hpp"
 #include "Graph_Edge.hpp"
+#include "Graph_Function.hpp"
+#include "Graph_Instruction.hpp"
 
 namespace hydrogen_framework {
 
@@ -21,12 +23,9 @@ public:
 
   /**
    * Constructor
-   * Initialize ID to zero
+   * Initialize current edge to the first edge
    */
-  explicit Graph_Edge_Iterator(Graph* graph)
-      : graph(graph), current_edge(*graph->getGraphEdges().begin()) {
-    this->visited_edges.emplace(this->current_edge);
-  }
+  explicit Graph_Edge_Iterator(Graph* graph, Graph_Function* graph_function);
 
   /**
    * Increment operator for iterating list forward

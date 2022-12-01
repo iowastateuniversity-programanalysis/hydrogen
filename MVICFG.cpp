@@ -4,14 +4,16 @@
  * Implementing MVICFG.hpp
  */
 #include "MVICFG.hpp"
+
 #include "Diff_Mapping.hpp"
 #include "Graph.hpp"
 #include "Graph_Edge.hpp"
+#include "Graph_Edge_Iterator.hpp"
 #include "Graph_Function.hpp"
 #include "Graph_Instruction.hpp"
 #include "Graph_Line.hpp"
-#include "Graph_Edge_Iterator.hpp"
 #include "Module.hpp"
+#include <ranges>
 namespace hydrogen_framework {
 Graph *buildICFG(Module *mod, unsigned graphVersion) {
   std::unique_ptr<llvm::Module> &modPtr = mod->getPtr();
@@ -241,7 +243,7 @@ Graph_Line *findMatchedLine(Graph_Line *t, Graph *matchTo, Graph *matchFrom, Dif
     return nullptr;
   } // End check for diff File name
   unsigned lineFrom = t->getLineNumber(matchFrom->getGraphVersion());
-  unsigned lineTo = 0;
+  unsigned lineTo;
   /* Check for virtual node */
   if (matchFrom->isVirtualNodeLineNumber(lineFrom)) {
     /* Virtual nodes have same unique line number across graphs*/
@@ -314,9 +316,7 @@ Graph_Edge *getEdge(Graph_Instruction *fromNode, Graph_Instruction *toNode, Grap
 
 Graph_Edge *getInBetweenEdge(Graph_Line *fromLine, Graph_Line *toLine) {
   std::list<Graph_Instruction *> fromLineInstructions = fromLine->getLineInstructions();
-  for (auto fromLineInstIter = fromLineInstructions.rbegin(); fromLineInstIter != fromLineInstructions.rend();
-       ++fromLineInstIter) {
-    Graph_Instruction *fromLineInst = *fromLineInstIter;
+  for (auto fromLineInst : std::ranges::reverse_view(fromLineInstructions)) {
     for (auto toLineInstIter : toLine->getLineInstructions()) {
       Graph_Edge *checkEdge = getEdge(fromLineInst, toLineInstIter, Graph_Edge::ANY);
       if (checkEdge) {
@@ -520,7 +520,7 @@ Graph_Instruction *getMatchedInstructionFromGraph(Graph *graphToMatch, Graph_Ins
 } // End getMatchedInstructionFromGraph
 
 void getEdgesForAddedLines(Graph *MVICFG, Graph *ICFG, const std::list<Graph_Line *> &addedLines,
-                           const std::list<Diff_Mapping> &diffMap, unsigned Version) {
+                           const std::list<Diff_Mapping> &diffMap) {
   for (auto line : addedLines) {
     for (auto lineInst : line->getLineInstructions()) {
       Graph_Instruction *lineDashInst = getMatchedInstructionFromGraph(ICFG, lineInst);
@@ -660,7 +660,7 @@ std::list<Graph_Line *> deleteFromMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mappin
                             if (getEdgeType) {
                               edgeType = getEdgeType->getEdgeType();
                             } else {
-                              bool foundEdge = true;
+                              bool foundEdge = false;
                               Graph_Edge *checkBetweenEdge = getInBetweenEdge(nDash, mDash);
                               if (checkBetweenEdge) {
                                 foundEdge = true;
@@ -873,27 +873,136 @@ void updateMVICFGVersion(Graph *MVICFG, std::list<Graph_Line *> addedLines, std:
       Graph_Instruction *edgeToInst = edge->getEdgeTo();
       if (edgeToInst->getGraphLine()->getLineNumber(Version) != 0) {
         /* The to Node is active for this version */
-        auto findInAddEgdeFrom =
+        auto findInAddEdgeFrom =
             std::find_if(std::begin(mvicfgAddEdgesNodes), std::end(mvicfgAddEdgesNodes),
                          [=](Graph_Instruction *instComp) { return (edge->getEdgeFrom() == instComp); });
-        if (findInAddEgdeFrom == mvicfgAddEdgesNodes.end()) {
+        if (findInAddEdgeFrom == mvicfgAddEdgesNodes.end()) {
           /* Neither the From node or To node were part of added edges */
           if (!edge->isPartOfGraph(Version)) {
             edge->pushEdgeVersions(Version);
           } // End check for isPartOfGraph
-        }   // End if for findInAddEgdeFrom
+        }   // End if for findInAddEdgeFrom
       }     // End check for edgeToInst
     }       // End check for edgeFromInst
   }         // End loop for updating Graph_Edge information
 } // End updateMVICFGVersion
 
-unsigned long long calculateAddedPaths(Graph *MVICFG, unsigned version1, unsigned version2) {
-  Graph_Edge_Iterator edge_iter = Graph_Edge_Iterator(MVICFG);
-  return 1;
+unsigned long long calculateAddedPaths(Graph *MVICFG, unsigned version_1, unsigned version_2) {
+  unsigned long long added_paths = 0;
+
+  for (auto *graph_function : MVICFG->getGraphFunctions()) {
+    bool on_path = false;
+
+    Graph_Edge_Iterator edge_iter = Graph_Edge_Iterator(MVICFG, graph_function);
+    Graph_Edge *current_edge = *edge_iter;
+    Graph_Instruction *previous_instruction = nullptr;
+    while (current_edge != nullptr) {
+
+      std::unordered_set<unsigned> current_edge_versions = current_edge->getEdgeVersions();
+      bool contains_version_1 = current_edge_versions.contains(version_1);
+      bool contains_version_2 = current_edge_versions.contains(version_2);
+
+      if (contains_version_2 && !contains_version_1) { // Conditions for being on a path
+        if (!on_path) {                                // Start a new path if not already on one
+          added_paths++;
+          on_path = true;
+        } else if (current_edge->getEdgeFrom() != previous_instruction) { // Start a new path if old path was broken
+          added_paths++;
+        }
+
+      } else if (on_path) { // Reached the end of a path
+        on_path = false;
+      }
+
+      previous_instruction = current_edge->getEdgeTo();
+      current_edge = *(++edge_iter);
+    }
+  }
+
+  return added_paths;
 }
 
-unsigned long long calculateDeletedPaths(Graph *MVICFG, unsigned version1, unsigned version2) {
-  Graph_Edge_Iterator edge_iter = Graph_Edge_Iterator(MVICFG);
-  return 1;
+unsigned long long calculateDeletedPaths(Graph *MVICFG, unsigned version_1, unsigned version_2) {
+  unsigned long long deleted_paths = 0;
+
+  for (auto *graph_function : MVICFG->getGraphFunctions()) {
+    bool on_path = false;
+
+    Graph_Edge_Iterator edge_iter = Graph_Edge_Iterator(MVICFG, graph_function);
+    Graph_Edge *current_edge = *edge_iter;
+    Graph_Instruction *previous_instruction = nullptr;
+    while (current_edge != nullptr) {
+
+      std::unordered_set<unsigned> current_edge_versions = current_edge->getEdgeVersions();
+      bool contains_version_1 = current_edge_versions.contains(version_1);
+      bool contains_version_2 = current_edge_versions.contains(version_2);
+
+      if (contains_version_1 && !contains_version_2) { // Conditions for being on a path
+        // Start a new path if not already on one
+        if (!on_path) {
+          deleted_paths++;
+          on_path = true;
+        } else if (current_edge->getEdgeFrom() != previous_instruction) { // Start a new path if old path was broken
+          deleted_paths++;
+        }
+      } else if (on_path) { // Reached the end of a path
+        on_path = false;
+      }
+
+      previous_instruction = current_edge->getEdgeTo();
+      current_edge = *(++edge_iter);
+    }
+  }
+
+  return deleted_paths;
+}
+
+std::pair<unsigned long long, unsigned long long> calculateChangedPaths(Graph *MVICFG, unsigned version_1,
+                                                                        unsigned version_2) {
+  unsigned long long added_paths = 0;
+  unsigned long long deleted_paths = 0;
+
+  for (auto *graph_function : MVICFG->getGraphFunctions()) {
+    bool on_added_path = false;
+    bool on_deleted_path = false;
+
+    Graph_Edge_Iterator edge_iter = Graph_Edge_Iterator(MVICFG, graph_function);
+    Graph_Edge *current_edge = *edge_iter;
+    Graph_Instruction *previous_instruction = nullptr;
+    while (current_edge != nullptr) {
+
+      std::unordered_set<unsigned> current_edge_versions = current_edge->getEdgeVersions();
+      bool contains_version_1 = current_edge_versions.contains(version_1);
+      bool contains_version_2 = current_edge_versions.contains(version_2);
+
+      if (contains_version_1 && !contains_version_2) { // Conditions for being on an added path
+        // Start a new added path if not already on one
+        if (!on_added_path) {
+          added_paths++;
+          on_added_path = true;
+          on_deleted_path = false;
+        } else if (current_edge->getEdgeFrom() != previous_instruction) { // Start a new path if old path was broken
+          added_paths++;
+        }
+      } else if (contains_version_2 && !contains_version_1) { // Conditions for being on a deleted path
+        // Start a new deleted path if not already on one
+        if (!on_deleted_path) {
+          deleted_paths++;
+          on_deleted_path = true;
+          on_added_path = false;
+        } else if (current_edge->getEdgeFrom() != previous_instruction) { // Start a new path if old path was broken
+          deleted_paths++;
+        }
+      } else if (on_added_path) { // Reached the end of an added path
+        on_added_path = false;
+      } else if (on_deleted_path) { // Reached the end of a deleted path
+        on_deleted_path = false;
+      }
+
+      previous_instruction = current_edge->getEdgeTo();
+      current_edge = *(++edge_iter);
+    }
+  }
+  return {added_paths, deleted_paths};
 }
 } // namespace hydrogen_framework
