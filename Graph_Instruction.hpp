@@ -9,6 +9,7 @@
 #include <list>
 #include <llvm/IR/Module.h>
 #include <set>
+#include <utility>
 namespace hydrogen_framework {
 /* Forward declaration */
 class Graph_Edge;
@@ -28,7 +29,7 @@ public:
   /**
    * Destructor
    */
-  ~Graph_Instruction() {}
+  ~Graph_Instruction() = default;
 
   /**
    * Set instructionID
@@ -38,7 +39,7 @@ public:
   /**
    * Set instructionLabel
    */
-  void setInstructionLabel(std::string label) { instructionLabel = label; }
+  void setInstructionLabel(std::string label) { instructionLabel = std::move(label); }
 
   /**
    * Set instructionPtr
@@ -58,7 +59,7 @@ public:
   /**
    * Return instructionID
    */
-  unsigned getInstructionID() { return instructionID; }
+  unsigned getInstructionID() const { return instructionID; }
 
   /**
    * Get instructionPtr
