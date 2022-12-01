@@ -129,7 +129,7 @@ public:
   /**
    * Print the graph in DOT format
    */
-  void printGraph(std::string graphName);
+  void printGraph(const std::string& graphName);
 
   /**
    * Find matching instruction in the ICFG
@@ -141,13 +141,13 @@ public:
    * Find virtual entry for the given function name
    * Can return NULL if no match is found
    */
-  Graph_Instruction *findVirtualEntry(std::string funcName);
+  Graph_Instruction *findVirtualEntry(const std::string& funcName);
 
   /**
    * Find virtual entry for the given function name
    * Can return NULL if no match is found
    */
-  Graph_Instruction *findVirtualExit(std::string funcName);
+  Graph_Instruction *findVirtualExit(const std::string& funcName);
 
   /**
    * Return graphFunctions
@@ -157,7 +157,7 @@ public:
   /**
    * Return TRUE if it is a virtual node
    */
-  bool isVirtualNodeLineNumber(unsigned lineNumber);
+  bool isVirtualNodeLineNumber(unsigned lineNumber) const;
 
   /**
    * Return graphEdges
