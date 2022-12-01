@@ -37,7 +37,7 @@
 .*.swo
 
 ## Auxiliary and intermediate files from other packages:
-TestPrograms/Results.txt
+TestPrograms/Result.txt
 **/*.dot
 **/*.pdf
 *.dot
