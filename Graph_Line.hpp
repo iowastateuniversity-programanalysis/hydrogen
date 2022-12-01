@@ -21,7 +21,7 @@ public:
   /**
    * Constructor
    */
-  Graph_Line(unsigned Version) : lineFunction(nullptr), lineGraphVersion(Version) {}
+  explicit Graph_Line(unsigned Version) : lineFunction(nullptr), lineGraphVersion(Version) {}
 
   /**
    * Destructor
@@ -67,7 +67,7 @@ public:
   /**
    * Return lineGraphVersion
    */
-  unsigned getLineGraphVersion() { return lineGraphVersion; }
+  unsigned getLineGraphVersion() const { return lineGraphVersion; }
 
 private:
   std::map<unsigned, unsigned> lineNumber;         /**< Map between graphVersion and line Number */
