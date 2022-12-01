@@ -10,6 +10,7 @@
 #include <iostream>
 #include <list>
 #include <regex>
+#include <utility>
 #include <vector>
 namespace hydrogen_framework {
 /**
@@ -20,17 +21,17 @@ public:
   /**
    * Constructor
    */
-  Diff_Mapping(std::string name) : fileName(name) {}
+  explicit Diff_Mapping(std::string name) : fileName(std::move(name)) {}
 
   /**
    * Destructor
    */
-  ~Diff_Mapping() { lineMap.clear(); }
+  ~Diff_Mapping() override { lineMap.clear(); }
 
   /**
    * Populate line mapping
    */
-  void putMapping(std::vector<sesElem> seqVector);
+  void putMapping(const std::vector<sesElem>& seqVector);
 
   /**
    * Return lineMap

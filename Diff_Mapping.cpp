@@ -6,8 +6,8 @@
 #include "Diff_Mapping.hpp"
 #include <limits>
 namespace hydrogen_framework {
-void Diff_Mapping::putMapping(std::vector<sesElem> seqVector) {
-  for (auto iter : seqVector) {
+void Diff_Mapping::putMapping(const std::vector<sesElem>& seqVector) {
+  for (const auto& iter : seqVector) {
     elemInfo info;
     switch (iter.second.type) {
     case SES_ADD:
