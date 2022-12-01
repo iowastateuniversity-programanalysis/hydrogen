@@ -4,6 +4,7 @@
  * Implementing Diff_Mapping.hpp
  */
 #include "Diff_Mapping.hpp"
+#include <limits>
 namespace hydrogen_framework {
 void Diff_Mapping::putMapping(std::vector<sesElem> seqVector) {
   for (auto iter : seqVector) {

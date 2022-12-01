@@ -21,7 +21,7 @@ public:
   /**
    * Constructor
    */
-  Graph_Line(unsigned Version) : lineFunction(NULL), lineGraphVersion(Version) {}
+  Graph_Line(unsigned Version) : lineFunction(nullptr), lineGraphVersion(Version) {}
 
   /**
    * Destructor
