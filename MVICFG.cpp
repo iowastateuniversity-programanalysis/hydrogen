@@ -370,9 +370,7 @@ std::list<Graph_Line *> addToMVICFG(Graph *MVICFG, Graph *ICFG, Diff_Mapping dif
       /* Create new one if it doesn't exist */
       Graph_Function *mvicfgFunc;
       if (findMvicfgFunc == mvicfgFunctions.end()) {
-        // TODO: Is this a bug?
         mvicfgFunc = new Graph_Function(MVICFG->getNextID());
-        auto *mvicfgFunc = new Graph_Function(MVICFG->getNextID());
         mvicfgFunc->setFunctionName(func->getFunctionName());
         mvicfgFunc->setFunctionFile(func->getFunctionFile());
       } else {
